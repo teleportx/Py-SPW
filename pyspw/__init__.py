@@ -1,8 +1,7 @@
 from . import api
 from . import errors
-from . import payment_webserver
 
-__all__ = ["Api", "payment_webserver", "errors"]
+__all__ = ["Api", "errors"]
 __version__ = 1.0
 
 
