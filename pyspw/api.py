@@ -60,7 +60,7 @@ class sp_api_base:
 
     def get_user(self, discord_id: str) -> str | None:
         """
-            Получение статуса проходки.
+            Получение ника пользователя.
             :param discord_id: ID пользователя дискорда.
             :return: Str если пользователь найден, None если пользователь не найден. В str содержиться никнейм пользователя
         """
@@ -76,10 +76,10 @@ class sp_api_base:
 
     def get_user_skin(self, discord_id: str, body_part: str, image_size: int = 64) -> bytes | None:
         """
-            Получение изображения головы майнкрафт скина.
+            Получение изображения части скина.
             :param discord_id: ID пользователя дискорда.
             :param body_part: Часть тела для получения. Допустимые значения - https://visage.surgeplay.com/index.html
-            :param image_size: Размер получаемого изображения (максимум 512).
+            :param image_size: Размер получаемого изображения.
             :return: Bytes если пользователь найден, None если пользователь не найден. В bytes содержиться изображение профиля
         """
 
@@ -117,11 +117,11 @@ class sp_api_base:
     def check_webhook(self, webhook_data: str, X_Body_Hash: str) -> bool:
         """
             Валидирует webhook
-            :param webhook_data: data из webhook.
+            :param webhook_data: Тело webhook'а.
             :param X_Body_Hash: Хэдер X-Body-Hash из webhook.
             :return: Bool True если вебхук пришел от верифицированного сервера, иначе False
         """
-        hmac_data = hmac.new(self.card_token.encode('utf-8'), webhook_data, sha256).digest()
+        hmac_data = hmac.new(self.card_token.encode('utf-8'), webhook_data.encode('utf-8'), sha256).digest()
         base64_data = b64encode(hmac_data)
         return hmac.compare_digest(base64_data, X_Body_Hash.encode('utf-8'))
 
@@ -142,7 +142,7 @@ class sp_api_base:
         }
         return self.__post('/payment', body).json()['url']
 
-    def create_payments(self, payments: tuple, request_delay: float = 0.1) -> list[str]:
+    def create_payments(self, payments: tuple, request_delay: float = 0.1) -> list:
         """
             Создание ссылок на оплату
             :param request_delay: Значение задержки между запросами, указывается в секундах
@@ -173,7 +173,14 @@ class sp_api_base:
 
         return answer
 
-    def send_transaction(self, receiver: str, amount: int, comment: str) -> None:
+    def send_transaction(self, receiver: str, amount: int, comment: str = 'Нет комментария') -> None:
+        """
+            Отправка транзакции
+            :param receiver: Номер карты на которую будет совершена транзакция.
+            :param amount: Сумма транзакции.
+            :param comment: Комментарий к транзакции.
+            :return: None.
+        """
         body = {
             'receiver': receiver,
             'amount': amount,
@@ -182,6 +189,15 @@ class sp_api_base:
         self.__post('/transactions', body)
 
     def send_transactions(self, transactions: tuple, request_delay: float = 0.1) -> None:
+        """
+            Отправка транзакций
+            :param request_delay: Значение задержки между запросами, указывается в секундах
+            :param transactions: Кортеж содержащий словари со следующими параметрами:
+                :param receiver: Номер карты на которую будет совершена транзакция.
+                :param amount: Сумма транзакции.
+                :param comment: Комментарий к транзакции.
+            :return: List с ссылками на страницы оплаты, в том порядке, в котором они были в кортеже payments
+        """
         for transaction in transactions:
             try:
                 self.send_transaction(
