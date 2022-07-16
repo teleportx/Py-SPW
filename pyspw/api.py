@@ -18,7 +18,7 @@ class sp_api_base:
     def __str__(self):
         pass
 
-    def __get(self, path: str = None) -> rq.Response:
+    def __get(self, path: str = None, ignore_status_code: bool = False) -> rq.Response:
         headers = {
             'Authorization': self.authorization,
             'User-Agent': 'Py-SPW'
@@ -29,6 +29,9 @@ class sp_api_base:
         except rq.exceptions.ConnectionError as error:
             raise err.SpwApiError(error)
 
+        if ignore_status_code:
+            return response
+
         if response.status_code == 200:
             return response
 
@@ -36,7 +39,8 @@ class sp_api_base:
             raise err.SpwApiError(f'HTTP: {response.status_code}, Server Error.')
 
         else:
-            raise err.SpwApiError(f'HTTP: {response.status_code} {response.json()["error"]}. Message: {response.json()["message"]}')
+            raise err.SpwApiError(
+                f'HTTP: {response.status_code} {response.json()["error"]}. Message: {response.json()["message"]}')
 
     def __post(self, path: str = None, body: dict = None) -> rq.Response:
         headers = {
@@ -64,7 +68,19 @@ class sp_api_base:
             :param discord_id: ID пользователя дискорда.
             :return: Str если пользователь найден, None если пользователь не найден. В str содержиться никнейм пользователя
         """
-        return self.__get(f'/users/{discord_id}').json()['username']
+        response = self.__get(f'/users/{discord_id}', True)
+
+        if response.status_code == 200:
+            return response.json()['username']
+
+        elif response.status_code == 404:
+            return None
+
+        elif response.status_code >= 500:
+            raise err.SpwApiError(f'HTTP: {response.status_code}, Server Error.')
+
+        else:
+            raise err.SpwApiError(f'HTTP: {response.status_code} {response.json()["error"]}. Message: {response.json()["message"]}')
 
     def check_access(self, discord_id: str) -> bool:
         """
