@@ -90,13 +90,13 @@ class sp_api_base:
         """
         return False if self.get_user(discord_id) is None else True
 
-    def get_user_skin(self, discord_id: str, body_part: str, image_size: int = 64) -> bytes | None:
+    def get_user_skin_url(self, discord_id: str, body_part: str, image_size: int = 64) -> str | None:
         """
             Получение изображения части скина.
             :param discord_id: ID пользователя дискорда.
             :param body_part: Часть тела для получения. Допустимые значения - https://visage.surgeplay.com/index.html
             :param image_size: Размер получаемого изображения.
-            :return: Bytes если пользователь найден, None если пользователь не найден. В bytes содержиться изображение профиля
+            :return: Str если пользователь найден, None если пользователь не найден. В str содержится ссылка на изображение профиля
         """
 
         if body_part not in accessed_body_part:
@@ -118,17 +118,31 @@ class sp_api_base:
                 return None
 
             # surgeplay
-            try:
-                mojang_response = rq.get(f'https://visage.surgeplay.com/{body_part}/{image_size}/{uuid}')
-                if mojang_response.status_code != 200:
-                    raise err.MojangApiError(f'HTTP status: {mojang_response.status_code}')
-                return mojang_response.content
-
-            except rq.exceptions.ConnectionError as error:
-                raise err.SurgeplayApiError(error)
+            return f'https://visage.surgeplay.com/{body_part}/{image_size}/{uuid}'
 
         else:
             return None
+
+    def get_user_skin(self, discord_id: str, body_part: str, image_size: int = 64) -> bytes | None:
+        """
+            Получение изображения части скина.
+            :param discord_id: ID пользователя дискорда.
+            :param body_part: Часть тела для получения. Допустимые значения - https://visage.surgeplay.com/index.html
+            :param image_size: Размер получаемого изображения.
+            :return: Bytes если пользователь найден, None если пользователь не найден. В bytes содержиться изображение профиля
+        """
+        url = self.get_user_skin_url(discord_id, body_part, image_size)
+        if url is None:
+            return None
+
+        try:
+            surgeplay_response = rq.get(url)
+            if surgeplay_response.status_code != 200:
+                raise err.SurgeplayApiError(f'HTTP status: {surgeplay_response.status_code}')
+            return surgeplay_response.content
+
+        except rq.exceptions.ConnectionError as error:
+            raise err.SurgeplayApiError(error)
 
     def check_webhook(self, webhook_data: str, X_Body_Hash: str) -> bool:
         """

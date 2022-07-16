@@ -10,7 +10,7 @@ requires = ['requests==2.28.1']
 
 setup(
     name='Py-SPW',
-    version='1.0.4',
+    version='1.1',
     packages=['pyspw'],
     url='https://github.com/teleport2/Py-SPW',
     license='MIT License',
