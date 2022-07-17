@@ -243,3 +243,6 @@ class sp_api_base:
                 raise err.BadParameter(f'Missing parameter {error}')
 
             time.sleep(request_delay)
+
+    def get_balance(self) -> int:
+        return self.__get('/card').json()['balance']
