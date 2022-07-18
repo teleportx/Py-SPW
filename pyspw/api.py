@@ -90,6 +90,23 @@ class sp_api_base:
         """
         return False if self.get_user(discord_id) is None else True
 
+    def get_user_uuid(self, discord_id: str) -> str | None:
+        username = self.get_user(discord_id)
+        if username is None:
+            return None
+
+        try:
+            mojang_response = rq.get(f'https://api.mojang.com/users/profiles/minecraft/{username}')
+            if mojang_response.status_code != 200:
+                raise err.MojangApiError(f'HTTP status: {mojang_response.status_code}')
+            return mojang_response.json()['id']
+
+        except rq.exceptions.ConnectionError as error:
+            raise err.MojangApiError(error)
+
+        except rq.exceptions.JSONDecodeError:
+            return None
+
     def get_user_skin_url(self, discord_id: str, body_part: str, image_size: int = 64) -> str | None:
         """
             Получение изображения части скина.
@@ -102,26 +119,11 @@ class sp_api_base:
         if body_part not in accessed_body_part:
             raise err.BadSkinPartName(f'"{body_part}" is not a part of the skin')
 
-        username = self.get_user(discord_id)
-        if username is not None:
-            # mojang
-            try:
-                mojang_response = rq.get(f'https://api.mojang.com/users/profiles/minecraft/{username}')
-                if mojang_response.status_code != 200:
-                    raise err.MojangApiError(f'HTTP status: {mojang_response.status_code}')
-                uuid = mojang_response.json()['id']
-
-            except rq.exceptions.ConnectionError as error:
-                raise err.MojangApiError(error)
-
-            except rq.exceptions.JSONDecodeError:
-                return None
-
-            # surgeplay
-            return f'https://visage.surgeplay.com/{body_part}/{image_size}/{uuid}'
-
-        else:
+        uuid = self.get_user_uuid(discord_id)
+        if uuid is None:
             return None
+
+        return f'https://visage.surgeplay.com/{body_part}/{image_size}/{uuid}'
 
     def get_user_skin(self, discord_id: str, body_part: str, image_size: int = 64) -> bytes | None:
         """
