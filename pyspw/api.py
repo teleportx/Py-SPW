@@ -206,7 +206,7 @@ class Py_SPW:
         }
         self.__post('/transactions', body)
 
-    def send_transactions(self, transactions: List[TransactionParameters], delay: float = 0.1) -> None:
+    def send_transactions(self, transactions: List[TransactionParameters], delay: float = 0.5) -> None:
         """
             Отправка транзакций
             :param delay: Значение задержки между запросами, указывается в секундах
