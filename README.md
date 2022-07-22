@@ -2,7 +2,7 @@
 Library fo work with SPworlds API.
 
 ## Installation
-Library written on 3.10.5
+Library written on python 3.10.5
 
 To install, run this command:
 `pip install Py-Spw`
