@@ -1,9 +1,11 @@
 from . import api
 from . import errors
+from . import User
+from . import Skin
+from . import Parameters
 
-__all__ = ["Api", "errors"]
-__version__ = 1.0
+__all__ = ["SpApi", "errors", "User", "Skin"]
 
 
-class Api(api.sp_api_base):
+class SpApi(api.Py_SPW):
     pass

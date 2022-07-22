@@ -3,28 +3,31 @@ from hashlib import sha256
 import hmac
 import requests as rq
 import time
+from typing import Optional, List
+import logging
+from mojang import MojangAPI
 
 from . import errors as err
+from .User import User
+from .Parameters import PaymentParameters, TransactionParameters
 
-accessed_body_part = ['face', 'front', 'frontfull', 'head', 'bust', 'full', 'skin']
+# deesiigneer stole some of my ideas and improved them. But I didn't lose my head and improved what deesiigneer improved :)
 
 
-class sp_api_base:
+class Py_SPW:
+    __spworlds_api_url = 'https://spworlds.ru/api/public'
+
     def __init__(self, card_id: str, card_token: str):
-        self.card_token = card_token
-        self.authorization = f"Bearer {str(b64encode(str(f'{card_id}:{card_token}').encode('utf-8')), 'utf-8')}"
-        self.host = 'https://spworlds.ru/api/public'
-
-    def __str__(self):
-        pass
+        self.__card_token = card_token
+        self.__authorization = f"Bearer {str(b64encode(str(f'{card_id}:{card_token}').encode('utf-8')), 'utf-8')}"
 
     def __get(self, path: str = None, ignore_status_code: bool = False) -> rq.Response:
         headers = {
-            'Authorization': self.authorization,
+            'Authorization': self.__authorization,
             'User-Agent': 'Py-SPW'
         }
         try:
-            response = rq.get(url=self.host + path, headers=headers)
+            response = rq.get(url=self.__spworlds_api_url + path, headers=headers)
 
         except rq.exceptions.ConnectionError as error:
             raise err.SpwApiError(error)
@@ -44,11 +47,11 @@ class sp_api_base:
 
     def __post(self, path: str = None, body: dict = None) -> rq.Response:
         headers = {
-            'Authorization': self.authorization,
+            'Authorization': self.__authorization,
             'User-Agent': 'Py-SPW'
         }
         try:
-            response = rq.post(url=self.host + path, headers=headers, json=body)
+            response = rq.post(url=self.__spworlds_api_url + path, headers=headers, json=body)
 
         except rq.exceptions.ConnectionError as error:
             raise err.SpwApiError(error)
@@ -62,19 +65,21 @@ class sp_api_base:
         else:
             raise err.SpwApiError(f'HTTP: {response.status_code} {response.json()["error"]}. Message: {response.json()["message"]}')
 
-    def get_user(self, discord_id: str) -> str | None:
+    def get_user(self, discord_id: str, use_mojang_api: bool = True) -> User:
         """
-            Получение ника пользователя.
+            Получение пользователя
+            :param use_mojang_api: Если True то будет обращаться к Mojang API для получения UUID, иначе обращаться не будет
             :param discord_id: ID пользователя дискорда.
-            :return: Str если пользователь найден, None если пользователь не найден. В str содержиться никнейм пользователя
+            :return: Class pyspw.User.User
         """
+
         response = self.__get(f'/users/{discord_id}', True)
 
         if response.status_code == 200:
-            return response.json()['username']
+            return User(response.json()['username'], use_mojang_api)
 
         elif response.status_code == 404:
-            return None
+            return User(None, use_mojang_api)
 
         elif response.status_code >= 500:
             raise err.SpwApiError(f'HTTP: {response.status_code}, Server Error.')
@@ -82,69 +87,64 @@ class sp_api_base:
         else:
             raise err.SpwApiError(f'HTTP: {response.status_code} {response.json()["error"]}. Message: {response.json()["message"]}')
 
+    def get_users(self, discord_ids: List[str], delay: float = 0.5, use_mojang_api: bool = True) -> List[User]:
+        """
+            Получение пользователей
+            :param use_mojang_api: Если True то будет обращаться к Mojang API для получения UUID, иначе обращаться не будет
+            :param delay: Значение задержки между запросами, указывается в секундах
+            :param discord_ids: List с IDs пользователей дискорда.
+            :return: List содержащий Classes pyspw.User.User
+        """
+
+        users = []
+
+        if len(discord_ids) > 100 and delay < 0.5:
+            logging.warning('You send DOS attack to SPWorlds API. Please set the delay to greater than or equal to 0.5')
+
+        for discord_id in discord_ids:
+            users.append(self.get_user(discord_id, False))
+            time.sleep(delay)
+
+        if use_mojang_api:
+            nicknames = [user.nickname for user in users]
+            uuids = MojangAPI.get_uuids(nicknames)
+
+            for user in users:
+                user.uuid = uuids[user.nickname]
+
+        return users
+
     def check_access(self, discord_id: str) -> bool:
         """
-            Получение статуса проходки.
+            Получение статуса проходки
             :param discord_id: ID пользователя дискорда.
-            :return: Bool - False если у пользователя не имеется проходки, True если у пользователя есть проходка
+            :return: Bool True если у пользователя есть проходка, иначе False
         """
-        return False if self.get_user(discord_id) is None else True
+        return self.get_user(discord_id, False).access
 
-    def get_user_uuid(self, discord_id: str) -> str | None:
-        username = self.get_user(discord_id)
-        if username is None:
-            return None
-
-        try:
-            mojang_response = rq.get(f'https://api.mojang.com/users/profiles/minecraft/{username}')
-            if mojang_response.status_code != 200:
-                raise err.MojangApiError(f'HTTP status: {mojang_response.status_code}')
-            return mojang_response.json()['id']
-
-        except rq.exceptions.ConnectionError as error:
-            raise err.MojangApiError(error)
-
-        except rq.exceptions.JSONDecodeError:
-            return None
-
-    def get_user_skin_url(self, discord_id: str, body_part: str, image_size: int = 64) -> str | None:
+    def check_accesses(self, discord_ids: List[str], delay: float = 0.5) -> List[bool]:
         """
-            Получение изображения части скина.
-            :param discord_id: ID пользователя дискорда.
-            :param body_part: Часть тела для получения. Допустимые значения - https://visage.surgeplay.com/index.html
-            :param image_size: Размер получаемого изображения.
-            :return: Str если пользователь найден, None если пользователь не найден. В str содержится ссылка на изображение профиля
+            Получение статуса проходок
+            :param delay: Значение задержки между запросами, указывается в секундах
+            :param discord_ids: List с IDs пользователей дискорда.
+            :return: List содержащий bool со значением статуса проходки
         """
 
-        if body_part not in accessed_body_part:
-            raise err.BadSkinPartName(f'"{body_part}" is not a part of the skin')
+        accesses = []
 
-        uuid = self.get_user_uuid(discord_id)
-        if uuid is None:
-            return None
+        users = self.get_users(discord_ids, delay, False)
 
-        return f'https://visage.surgeplay.com/{body_part}/{image_size}/{uuid}'
+        if len(discord_ids) > 100 and delay < 0.5:
+            logging.warning('You send DOS attack to SPWorlds API. Please set the delay to greater than or equal to 0.5')
 
-    def get_user_skin(self, discord_id: str, body_part: str, image_size: int = 64) -> bytes | None:
-        """
-            Получение изображения части скина.
-            :param discord_id: ID пользователя дискорда.
-            :param body_part: Часть тела для получения. Допустимые значения - https://visage.surgeplay.com/index.html
-            :param image_size: Размер получаемого изображения.
-            :return: Bytes если пользователь найден, None если пользователь не найден. В bytes содержиться изображение профиля
-        """
-        url = self.get_user_skin_url(discord_id, body_part, image_size)
-        if url is None:
-            return None
+        for user in users:
+            if user is not None:
+                accesses.append(True)
 
-        try:
-            surgeplay_response = rq.get(url)
-            if surgeplay_response.status_code != 200:
-                raise err.SurgeplayApiError(f'HTTP status: {surgeplay_response.status_code}')
-            return surgeplay_response.content
+            else:
+                accesses.append(False)
 
-        except rq.exceptions.ConnectionError as error:
-            raise err.SurgeplayApiError(error)
+        return accesses
 
     def check_webhook(self, webhook_data: str, X_Body_Hash: str) -> bool:
         """
@@ -153,98 +153,78 @@ class sp_api_base:
             :param X_Body_Hash: Хэдер X-Body-Hash из webhook.
             :return: Bool True если вебхук пришел от верифицированного сервера, иначе False
         """
-        hmac_data = hmac.new(self.card_token.encode('utf-8'), webhook_data.encode('utf-8'), sha256).digest()
+
+        hmac_data = hmac.new(self.__card_token.encode('utf-8'), webhook_data.encode('utf-8'), sha256).digest()
         base64_data = b64encode(hmac_data)
         return hmac.compare_digest(base64_data, X_Body_Hash.encode('utf-8'))
 
-    def create_payment(self, amount: int, redirectUrl: str, webhookUrl: str, data: str = '') -> str:
+    def create_payment(self, params: PaymentParameters) -> str:
         """
             Создание ссылки на оплату
-            :param amount: Стоимость покупки в АРах.
-            :param redirectUrl: URL страницы, на которую попадет пользователь после оплаты.
-            :param webhookUrl: URL, куда наш сервер направит запрос, чтобы оповестить ваш сервер об успешной оплате.
-            :param data: Строка до 100 символов, сюда можно пометить любые полезные данных.
+            :param params: class PaymentParams параметров оплаты
             :return: Str ссылка на страницу оплаты, на которую стоит перенаправить пользователя.
         """
+
         body = {
-            'amount': amount,
-            'redirectUrl': redirectUrl,
-            'webhookUrl': webhookUrl,
-            'data': data
+            'amount': params.amount,
+            'redirectUrl': params.redirectUrl,
+            'webhookUrl': params.webhookUrl,
+            'data': params.data
         }
         return self.__post('/payment', body).json()['url']
 
-    def create_payments(self, payments: tuple, request_delay: float = 0.1) -> list:
+    def create_payments(self, payments: List[PaymentParameters], delay: float = 0.5) -> list:
         """
             Создание ссылок на оплату
-            :param request_delay: Значение задержки между запросами, указывается в секундах
-            :param payments: Кортеж содержащий словари со следующими параметрами:
-                :parameter amount: Стоимость покупки в АРах.
-                :parameter redirectUrl: URL страницы, на которую попадет пользователь после оплаты.
-                :parameter webhookUrl: URL, куда наш сервер направит запрос, чтобы оповестить ваш сервер об успешной оплате.
-                :parameter data: Строка до 100 символов, сюда можно пометить любые полезные данных.
-            :return: List с ссылками на страницы оплаты, в том порядке, в котором они были в кортеже payments
+            :param payments: Список содержащий classes PaymentParams
+            :param delay: Значение задержки между запросами, указывается в секундах
+            :return: List со ссылками на страницы оплаты, в том порядке, в котором они были в кортеже payments
         """
+
         answer = []
+
+        if len(payments) > 100 and delay < 0.5:
+            logging.warning('You send DOS attack to SPWorlds API. Please set the delay to greater than or equal to 0.5')
+
         for payment in payments:
-            try:
-                answer.append(self.create_payment(
-                    int(payment['amount']),
-                    str(payment['redirectUrl']),
-                    str(payment['webhookUrl']),
-                    str(payment['data'])
-                ))
-
-            except ValueError:
-                raise err.BadParameter('Amount must be int')
-
-            except KeyError as error:
-                raise err.BadParameter(f'Missing parameter {error}')
-
-            time.sleep(request_delay)
+            answer.append(self.create_payment(payment))
+            time.sleep(delay)
 
         return answer
 
-    def send_transaction(self, receiver: str, amount: int, comment: str = 'Нет комментария') -> None:
+    def send_transaction(self, params: TransactionParameters) -> None:
         """
             Отправка транзакции
-            :param receiver: Номер карты на которую будет совершена транзакция.
-            :param amount: Сумма транзакции.
-            :param comment: Комментарий к транзакции.
+            :param params: class TransactionParameters параметры транзакции
             :return: None.
         """
+
         body = {
-            'receiver': receiver,
-            'amount': amount,
-            'comment': comment
+            'receiver': params.receiver,
+            'amount': params.amount,
+            'comment': params.comment
         }
         self.__post('/transactions', body)
 
-    def send_transactions(self, transactions: tuple, request_delay: float = 0.1) -> None:
+    def send_transactions(self, transactions: List[TransactionParameters], delay: float = 0.1) -> None:
         """
             Отправка транзакций
-            :param request_delay: Значение задержки между запросами, указывается в секундах
-            :param transactions: Кортеж содержащий словари со следующими параметрами:
-                :param receiver: Номер карты на которую будет совершена транзакция.
-                :param amount: Сумма транзакции.
-                :param comment: Комментарий к транзакции.
-            :return: List с ссылками на страницы оплаты, в том порядке, в котором они были в кортеже payments
+            :param delay: Значение задержки между запросами, указывается в секундах
+            :param transactions: Список содержащий classes TransactionParameters
+            :return: List со ссылками на страницы оплаты, в том порядке, в котором они были в кортеже payments
         """
+
+        if len(transactions) > 100 and delay < 0.5:
+            logging.warning('You send DOS attack to SPWorlds API. Please set the delay to greater than or equal to 0.5')
+
         for transaction in transactions:
-            try:
-                self.send_transaction(
-                    str(transaction['receiver']),
-                    int(transaction['amount']),
-                    str(transaction['comment'])
-                )
-
-            except ValueError:
-                raise err.BadParameter('Amount must be int')
-
-            except KeyError as error:
-                raise err.BadParameter(f'Missing parameter {error}')
-
-            time.sleep(request_delay)
+            self.send_transaction(transaction)
+            time.sleep(delay)
 
     def get_balance(self) -> int:
+        """
+            Получение баланса
+            :return: Int со значением баланса
+        """
+
         return self.__get('/card').json()['balance']
