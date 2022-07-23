@@ -13,7 +13,7 @@ requirements = [
 
 setup(
     name='Py-SPW',
-    version='1.4.2',
+    version='1.4.3',
     packages=['pyspw'],
     url='https://github.com/teleport2/Py-SPW',
     license='MIT License',
@@ -23,7 +23,7 @@ setup(
     long_description=description_md,
     long_description_content_type='text/markdown',
     install_requires=requirements,
-    python_requires='>=3.10.5',
+    python_requires='>=3.10',
     project_urls={
         "Docs": "https://github.com/teleport2/Py-SPW/wiki",
         "GitHub": "https://github.com/teleport2/Py-SPW"
