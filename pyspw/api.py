@@ -1,5 +1,4 @@
 import platform
-import sys
 from base64 import b64encode
 from dataclasses import dataclass
 from enum import Enum
