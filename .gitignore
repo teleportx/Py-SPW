@@ -155,3 +155,5 @@ upload.bat
 
 # PyPi description
 pypi.md
+
+_build
