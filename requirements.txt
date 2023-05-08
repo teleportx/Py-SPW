@@ -1,0 +1,5 @@
+requests~=2.30.0
+mojang~=1.1.0
+pydantic~=1.10.7
+setuptools~=65.5.1
+validators~=0.20.0

@@ -1,15 +1,28 @@
 # Py SPW
-Library fo work with SPworlds API.
+Library for work with [SPWorlds](https://spworlds.ru) API in Python.
 
 ## Installation
-Library written on python 3.10.5
+Need python version >=3.7
 
-To install, run this command:
-`pip install Py-Spw`
+```shell
+pip install Py-Spw
+```
 
-After import Py-SPW to your project: `import pyspw`
+## Quick start
+*Checking user access*
+```python
+import pyspw
+
+api = pyspw.SpApi(card_id='card_id',
+                  card_token='card_token')
+
+print(api.check_access('437610383310716930'))
+```
+
+### How to
+You can see [examples](https://github.com/teleportx/Py-SPW/tree/main/examples) to help solve your problem
 
 ## Links
 - [PyPi](https://pypi.org/project/Py-SPW)
-- [Documentation](https://github.com/teleport2/Py-SPW/wiki)
-- [Author](https://github.com/teleport2)
+- [Documentation](https://github.com/teleportx/Py-SPW/wiki)
+- [API](https://github.com/sp-worlds/api-docs)
