@@ -12,6 +12,9 @@ mapi = MAPI()
 
 
 class SkinVariant(Enum):
+    """
+    Варианты скинов.
+    """
     SLIM = 'slim'
     CLASSIC = 'classic'
 
@@ -27,9 +30,20 @@ class _SkinPart:
         return self.get_image()
 
     def get_url(self) -> str:
+        """
+        Получения ссылки на изображение части скина.
+
+        :return: Ссылка на изображение части скина.
+        """
         return self.__skin_part_url
 
     def get_image(self) -> bytes:
+        """
+        Получения изображения части скина.
+
+        :return: Изображения части скина.
+        """
+
         try:
             visage_surgeplay_response = rq.get(self.__skin_part_url)
             if visage_surgeplay_response.status_code != 200:
@@ -99,4 +113,7 @@ class User:
         return self._profile
 
     def get_skin(self) -> Skin:
+        """
+        Получения объекта скина пользователя.
+        """
         return Skin(self._profile)

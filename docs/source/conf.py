@@ -68,5 +68,5 @@ html_theme_options = {
     ],
     "source_repository": "https://github.com/teleportx/Py-SPW/",
     "source_branch": "main",
-    "source_directory": "docs/",
+    "source_directory": "docs/source/",
 }

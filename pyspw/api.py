@@ -29,6 +29,16 @@ class _Card:
 
 
 class SpApi:
+    """
+    API класс для работы с spworlds api
+
+    :param card_id: Индефикатор карты
+    :type card_id: str
+
+    :param card_token: Секретный ключ доступа карты
+    :type card_token: str
+    """
+
     _spworlds_api_url = 'https://spworlds.ru/api/public'
 
     def __init__(self, card_id: str, card_token: str):
@@ -65,8 +75,9 @@ class SpApi:
 
     def ping(self) -> bool:
         """
-            Проверка работоспособности API
-            :return: Bool работает или нет
+            Проверка работоспособности API.
+
+            :return: Состояние API.
         """
         try:
             self.get_balance()
@@ -77,9 +88,14 @@ class SpApi:
 
     def get_user(self, discord_id: str) -> User:
         """
-            Получение пользователя
+            Получение пользователя.
+
             :param discord_id: ID пользователя дискорда.
-            :return: Class pyspw.User.User
+            :type discord_id: bool
+
+            :return: Объект пользователя.
+
+            :raises SpwUserNotFound: Пользователь не был найден.
         """
 
         response = self._request(_RequestTypes.GET, f'/users/{discord_id}', ignore_codes=[404])
@@ -90,51 +106,75 @@ class SpApi:
 
     def check_access(self, discord_id: str) -> bool:
         """
-            Получение статуса проходки
+            Получение статуса проходки.
+
             :param discord_id: ID пользователя дискорда.
-            :return: Bool True если у пользователя есть проходка, иначе False
+            :type discord_id: bool
+
+            :return: Состояние проходки пользователя.
         """
         response = self._request(_RequestTypes.GET, f'/users/{discord_id}', ignore_codes=[404])
         return response.status_code != 404
 
     def check_webhook(self, webhook_data: str, X_Body_Hash: str) -> bool:
         """
-            Валидирует webhook
+            Валидирует webhook.
+
             :param webhook_data: Тело webhook'а.
+            :type webhook_data: str
+
             :param X_Body_Hash: Хэдер X-Body-Hash из webhook.
-            :return: Bool True если вебхук пришел от верифицированного сервера, иначе False
+            :type X_Body_Hash: str
+
+            :return: Верефецирован или нет вебхук.
         """
 
         hmac_data = hmac.new(self._card.token.encode('utf-8'), webhook_data.encode('utf-8'), sha256).digest()
         base64_data = b64encode(hmac_data)
         return hmac.compare_digest(base64_data, X_Body_Hash.encode('utf-8'))
 
-    def create_payment(self, params: Payment) -> str:
+    def create_payment(self, payment: Payment) -> str:
         """
-            Создание ссылки на оплату
-            :param params: class PaymentParams параметров оплаты
-            :return: Str ссылка на страницу оплаты, на которую стоит перенаправить пользователя.
-        """
-        return self._request(_RequestTypes.POST, '/payment', params.dict()).json()['url']
+            Создание ссылки на оплату.
 
-    def send_transaction(self, params: Transaction) -> None:
+            :param payment: Параметры оплаты.
+            :type payment: Payment
+
+            :return: Ссылку на страницу оплаты, на которую стоит перенаправить пользователя.
         """
-            Отправка транзакции
-            :param params: class TransactionParameters параметры транзакции
-            :return: None.
+        return self._request(_RequestTypes.POST, '/payment', payment.dict()).json()['url']
+
+    def send_transaction(self, transaction: Transaction) -> None:
         """
-        response = self._request(_RequestTypes.POST, '/transactions', params.dict(), ignore_codes=[400])
-        if response.status_code == 400 and response.json()["message"] == 'Недостаточно средств на карте':
-            raise err.SpwInsufficientFunds()
+            Отправка транзакции.
+            
+            :param transaction: Параметры транзакции.
+            :type transaction: Transaction
+
+            :raises SpwInsufficientFunds: Недостаточно средств на карте.
+            :raises SpwCardNotFound: Карта получателя не найдена.
+        """
+        response = self._request(_RequestTypes.POST, '/transactions', transaction.dict(), ignore_codes=[400])
+        if response.status_code == 400:
+            msg = response.json()["message"]
+            if msg == 'Недостаточно средств на карте':
+                raise err.SpwInsufficientFunds()
+
+            elif msg == 'Карты не существует':
+                raise err.SpwCardNotFound()
 
     def get_balance(self) -> int:
         """
-            Получение баланса
-            :return: Int со значением баланса
+            Получение баланса.
+
+            :return: Значения баланса карты.
         """
         return self._request(_RequestTypes.GET, '/card').json()['balance']
 
-    # Manys
+    # ---------------------------------
+    # ------------- Manys -------------
+    # ---------------------------------
+
     def _many_req(self, iterable: List, method: Callable, delay: float) -> List:
         users = []
 
@@ -149,36 +189,70 @@ class SpApi:
 
     def get_users(self, discord_ids: List[str], delay: float = 0.3) -> List[User]:
         """
-            Получение пользователей
-            :param delay: Значение задержки между запросами, указывается в секундах
-            :param discord_ids: List с IDs пользователей дискорда.
-            :return: List содержащий Classes pyspw.User.User
+            Получение пользователей.
+
+            :param delay: Значение задержки между запросами, указывается в секундах.
+            :type delay: float
+
+            :param discord_ids: Список discord id пользователей, которых вы бы хотели получить.
+            :type discord_ids: List[str]
+
+            :return: Список с пользователями.
+
+            :raises SpwUserNotFound: Пользователь не был найден.
         """
         return self._many_req(discord_ids, self.get_user, delay)
 
     def check_accesses(self, discord_ids: List[str], delay: float = 0.3) -> List[bool]:
         """
-            Получение статуса проходок
-            :param delay: Значение задержки между запросами, указывается в секундах
-            :param discord_ids: List с IDs пользователей дискорда.
-            :return: List содержащий bool со значением статуса проходки
+            Получение статуса проходок.
+
+            :param delay: Значение задержки между запросами, указывается в секундах.
+            :type delay: float
+
+            :param discord_ids: Список discord id пользователей статусы проходок, которых вы бы хотели получить.
+            :type discord_ids: List[str]
+
+            :return: Список со статусами проходок.
         """
         return self._many_req(discord_ids, self.check_access, delay)
 
     def create_payments(self, payments: List[Payment], delay: float = 0.5) -> List[str]:
         """
-            Создание ссылок на оплату
-            :param payments: Список содержащий classes PaymentParams
-            :param delay: Значение задержки между запросами, указывается в секундах
-            :return: List со ссылками на страницы оплаты, в том порядке, в котором они были в кортеже payments
+            Создание ссылок на оплату.
+
+            :param delay: Значение задержки между запросами, указывается в секундах.
+            :type delay: float
+
+            :param payments: Список параметров оплаты.
+            :type payments: List[Payment]
+
+            :return: Список ссылок на оплату.
         """
         return self._many_req(payments, self.create_payment, delay)
 
     def send_transactions(self, transactions: List[Transaction], delay: float = 0.5) -> None:
         """
-            Отправка транзакций
-            :param delay: Значение задержки между запросами, указывается в секундах
-            :param transactions: Список содержащий classes TransactionParameters
-            :return: List со ссылками на страницы оплаты, в том порядке, в котором они были в кортеже payments
+            Отправка транзакций.
+
+            .. warning::
+                **Важно: Перед множетсвенной отправки транзаций проводится дополнительная проверка на количество средств на карте.
+                В случае если во время совершения транзакций кто-либо еще спишет с этой карты сумму, после которой
+                остаток на карте не будет достаточен для проведения транзакции, то выполнение транзакций прервется,
+                а предыдущие транзации не откатятся.**
+
+            :param delay: Значение задержки между запросами, указывается в секундах.
+            :type delay: float
+
+            :param transactions: Список параметров транзакций
+            :type transactions: List[Transaction]
+
+            :raises SpwInsufficientFunds: Недостаточно средств на карте.
+            :raises SpwCardNotFound: Карта получателя не найдена.
         """
+
+        # Additional balance verify
+        if self.get_balance() < sum([tr.amount for tr in transactions]):
+            raise err.SpwInsufficientFunds()
+
         self._many_req(transactions, self.send_transaction, delay)
