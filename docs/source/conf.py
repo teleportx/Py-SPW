@@ -8,7 +8,7 @@ import sys
 
 sys.path.insert(0, os.path.abspath('../..'))
 
-import pyspw
+exec(sorted([el if el.startswith('__version__') else 'Z' for el in open('../../pyspw/__init__.py', 'r').read().split('\n')], reverse=True)[0])
 
 # -- Project information -----------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
@@ -16,7 +16,7 @@ import pyspw
 project = 'Py-SPW'
 copyright = '2023, Teleport'
 author = 'Teleport'
-release = pyspw.__version__
+release = __version__
 
 # -- General configuration ---------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration
