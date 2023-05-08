@@ -13,3 +13,4 @@ python:
     - method: pip
       path: .
     - requirements: ./docs/source/requirements.txt
+    - requirements: requirements.txt
