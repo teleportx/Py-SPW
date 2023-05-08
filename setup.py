@@ -24,7 +24,7 @@ setup(
     install_requires=requirements,
     python_requires='>=3.7',
     project_urls={
-        "Docs": "https://github.com/teleport2/Py-SPW/wiki",
-        "GitHub": "https://github.com/teleport2/Py-SPW"
+        "Docs": "https://pyspw.xstl.ru/en/latest/",
+        "GitHub": "https://github.com/teleport2/Py-SPW/"
     },
 )
