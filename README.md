@@ -30,5 +30,5 @@ print(api.check_access('437610383310716930'))
 
 ## Links
 - [PyPi](https://pypi.org/project/Py-SPW)
-- [Documentation](https://pyspw.xstl.ru/latest)
+- [Documentation](https://pyspw.xstl.ru/en/latest/)
 - [API](https://github.com/sp-worlds/api-docs)

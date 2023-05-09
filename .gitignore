@@ -157,3 +157,6 @@ upload.bat
 pypi.md
 
 _build
+
+dotenv.sh
+publish.sh

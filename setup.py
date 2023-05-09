@@ -17,7 +17,7 @@ setup(
     url='https://github.com/teleportx/Py-SPW',
     license='MIT License',
     author='Stepan Khozhempo',
-    author_email='stepan@khoz.ru',
+    author_email='stepan@xstl.ru',
     description='Python library for spworlds API',
     long_description=description_md,
     long_description_content_type='text/markdown',
