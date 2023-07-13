@@ -1,8 +1,6 @@
 from os import path
 from setuptools import setup
 
-from pyspw import __version__
-
 this_directory = path.abspath(path.dirname(__file__))
 
 with open(path.join(this_directory, 'README.md'), encoding='utf-8') as f:
@@ -12,7 +10,7 @@ requirements = open('requirements.txt', 'r').read().split('\n')
 
 setup(
     name='Py-SPW',
-    version=__version__,
+    version='1.5.1',
     packages=['pyspw'],
     url='https://github.com/teleportx/Py-SPW',
     license='MIT License',
