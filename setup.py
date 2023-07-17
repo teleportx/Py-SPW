@@ -8,9 +8,11 @@ with open(path.join(this_directory, 'README.md'), encoding='utf-8') as f:
 
 requirements = open('requirements.txt', 'r').read().split('\n')
 
+exec(sorted([el if el.startswith('__version__') else 'Z' for el in open('./pyspw/__init__.py', 'r').read().split('\n')], reverse=True)[0])
+
 setup(
     name='Py-SPW',
-    version='1.5.1',
+    version=__version__,
     packages=['pyspw'],
     url='https://github.com/teleportx/Py-SPW',
     license='MIT License',
