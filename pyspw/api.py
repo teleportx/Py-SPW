@@ -1,3 +1,4 @@
+import json
 import platform
 from base64 import b64encode
 from dataclasses import dataclass
@@ -57,7 +58,10 @@ class SpApi:
         except rq.exceptions.ConnectionError as error:
             raise err.SpwApiError(error)
 
-        if response.headers.get('Content-Type') != 'application/json':
+        try:
+            response.json()
+
+        except json.JSONDecodeError:
             raise err.SpwApiDDOS()
 
         if response.ok or response.status_code in ignore_codes:
