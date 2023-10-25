@@ -57,7 +57,7 @@ class _SkinPart:
 class Skin:
     __visage_surgeplay_url = 'https://visage.surgeplay.com/'
 
-    def __init__(self, profile: UserProfile):
+    def __init__(self, profile: str):
         self._profile = profile
         self._variant = SkinVariant(profile.skin_variant)
 
@@ -98,7 +98,7 @@ class User:
         self._uuid = mapi.get_uuid(nickname)
         if self._uuid is None:
             raise MojangAccountNotFound(self._nickname)
-        self._profile = mapi.get_profile(self._uuid)
+   
 
     @property
     def nickname(self) -> str:
@@ -108,12 +108,8 @@ class User:
     def uuid(self) -> str:
         return self._uuid
 
-    @property
-    def profile(self) -> UserProfile:
-        return self._profile
-
     def get_skin(self) -> Skin:
         """
         Получения объекта скина пользователя.
         """
-        return Skin(self._profile)
+        return Skin(self._uuid)
