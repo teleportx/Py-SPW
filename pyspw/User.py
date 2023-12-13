@@ -10,6 +10,10 @@ from .errors import MojangAccountNotFound
 
 mapi = MAPI()
 
+headers = {
+    'User-Agent': f'Py-SPW'
+}
+
 
 class SkinVariant(Enum):
     """
@@ -45,7 +49,7 @@ class _SkinPart:
         """
 
         try:
-            visage_surgeplay_response = rq.get(self.__skin_part_url)
+            visage_surgeplay_response = rq.get(self.__skin_part_url, headers=headers)
             if visage_surgeplay_response.status_code != 200:
                 raise err.SurgeplayApiError(f'HTTP status: {visage_surgeplay_response.status_code}')
             return visage_surgeplay_response.content
