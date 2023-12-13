@@ -1,4 +1,6 @@
-from os import path
+from os import path, environ
+from random import randint
+
 from setuptools import setup
 
 this_directory = path.abspath(path.dirname(__file__))
@@ -9,6 +11,9 @@ with open(path.join(this_directory, 'README.md'), encoding='utf-8') as f:
 requirements = open('requirements.txt', 'r').read().split('\n')
 
 exec(sorted([el if el.startswith('__version__') else 'Z' for el in open('./pyspw/__init__.py', 'r').read().split('\n')], reverse=True)[0])
+
+if environ['test'] == 'true':
+    __version__ = '.'.join([str(randint(1, 9999)) for _ in range(3)])
 
 setup(
     name='Py-SPW',
