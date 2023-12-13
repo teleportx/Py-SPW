@@ -48,7 +48,9 @@ jobs:
         with:
           python-version: '3.x'
       - name: Test
-        run:
+        run: |
+          ls
+          ls dist
           pip install dist/Py-SPW-${{ github.run_id }}-${{ github.run_attempt }}.tar.gz
 
   publish-to-testpypi:
