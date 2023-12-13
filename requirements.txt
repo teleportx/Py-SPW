@@ -1,5 +1,5 @@
-requests==2.28.2
+requests>=2.28.2
 mojang==1.1.0
-pydantic~=1.10.7
-setuptools~=65.5.1
-validators~=0.20.0
+pydantic>=1.10.7
+setuptools>=65.5.1
+validators>=0.20.0
