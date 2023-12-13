@@ -44,6 +44,8 @@ jobs:
           python-version: '3.x'
       - name: Test
         run: |
+          ls
+          ls dist
           pip install dist/*
 
   publish-to-testpypi:
