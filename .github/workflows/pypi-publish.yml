@@ -38,14 +38,16 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
+      - name: Download all the dists
+        uses: actions/download-artifact@v3
+        with:
+          name: python-package-distributions
+          path: dist/
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
           python-version: '3.x'
       - name: Test
-        with:
-          name: python-package-distributions
-          path: dist/
         run: |
           ls
           ls dist
