@@ -2,6 +2,9 @@ name: Publish Package
 
 on: push
 
+env:
+  version: ${{ github.run_id }}-${{ github.run_attempt }}
+
 jobs:
   build:
     name: Build distribution
@@ -21,8 +24,6 @@ jobs:
         --user
     - name: Build a binary wheel and a source tarball
       run: python3 -m build
-      env:
-        generate_random_version: true
     - name: Store the distribution packages
       uses: actions/upload-artifact@v3
       with:

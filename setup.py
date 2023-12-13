@@ -1,5 +1,4 @@
 from os import path, environ
-from random import randint
 
 from setuptools import setup
 
@@ -12,8 +11,8 @@ requirements = open('requirements.txt', 'r').read().split('\n')
 
 exec(sorted([el if el.startswith('__version__') else 'Z' for el in open('./pyspw/__init__.py', 'r').read().split('\n')], reverse=True)[0])
 
-if environ['generate_random_version'] == 'true':
-    __version__ = '.'.join([str(randint(1, 9999)) for _ in range(3)])
+if environ.get('version') is not None:
+    __version__ = environ.get('version')
 
 setup(
     name='Py-SPW',
