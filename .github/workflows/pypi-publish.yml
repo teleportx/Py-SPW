@@ -30,10 +30,26 @@ jobs:
         name: python-package-distributions
         path: dist/
 
+  test:
+    name: Test distribution
+    needs:
+      - build
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.x'
+      - name: Test
+        run: |
+          pip install dist/*
+
   publish-to-testpypi:
     name: Publish Python distribution to TestPypi
     needs:
-    - build
+    - test
     runs-on: ubuntu-latest
 
     environment:
@@ -53,19 +69,3 @@ jobs:
       uses: pypa/gh-action-pypi-publish@release/v1
       with:
         repository-url: https://test.pypi.org/legacy/
-  test:
-    name: Test distribution
-    needs:
-    - publish-to-testpypi
-    runs-on: ubuntu-latest
-
-    steps:
-    - uses: actions/checkout@v4
-    - name: Set up Python
-      uses: actions/setup-python@v4
-      with:
-        python-version: '3.x'
-    - name: Test
-      run: |
-        sleep 30s
-        pip install -i https://test.pypi.org/simple/ Py-SPW==${{ github.run_id }}-${{ github.run_attempt }} --no-deps
