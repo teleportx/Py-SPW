@@ -12,7 +12,7 @@ requirements = open('requirements.txt', 'r').read().split('\n')
 
 exec(sorted([el if el.startswith('__version__') else 'Z' for el in open('./pyspw/__init__.py', 'r').read().split('\n')], reverse=True)[0])
 
-if environ['test'] == 'true':
+if environ['generate_random_version'] == 'true':
     __version__ = '.'.join([str(randint(1, 9999)) for _ in range(3)])
 
 setup(

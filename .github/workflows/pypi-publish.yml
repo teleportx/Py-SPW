@@ -7,7 +7,7 @@ jobs:
     name: Build distribution
     runs-on: ubuntu-latest
     environment:
-      test: true
+      generate_random_version: true
 
     steps:
     - uses: actions/checkout@v4
