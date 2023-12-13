@@ -1,4 +1,9 @@
+[![PyPI version](https://badge.fury.io/py/Py-SPW.svg)](https://pyspw.xstl.ru/ru/latest/?badge=latest)
+[![python](https://img.shields.io/badge/python-3.7%20%7C%203.8%20%7C%203.9%20%7C%203.10%20%7C%203.11-blue)](https://pyspw.xstl.ru/ru/latest/?badge=latest)
+
 [![Documentation Status](https://readthedocs.org/projects/py-spw/badge/?version=latest)](https://pyspw.xstl.ru/ru/latest/?badge=latest)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://github.com/teleportx/Py-SPW/blob/main/LICENSE)
+[![Downloads](https://img.shields.io/pypi/dm/Py-SPW)](https://pyspw.xstl.ru/ru/latest/?badge=latest)
 
 # Py SPW
 Library for work with [SPWorlds](https://spworlds.ru) API in Python.
