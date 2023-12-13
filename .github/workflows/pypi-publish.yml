@@ -68,5 +68,5 @@ jobs:
         python-version: '3.x'
     - name: Test
       run: |
-        sleep 10s
+        sleep 30s
         pip install -i https://test.pypi.org/simple/ Py-SPW==${{ github.run_id }}-${{ github.run_attempt }}
