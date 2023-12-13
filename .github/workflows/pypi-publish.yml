@@ -53,3 +53,19 @@ jobs:
       uses: pypa/gh-action-pypi-publish@release/v1
       with:
         repository-url: https://test.pypi.org/legacy/
+
+  test:
+    name: Test distribution
+    needs:
+    - publish-to-testpypi
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.x'
+    - name: Test
+      run: |
+        pip install -i https://test.pypi.org/simple/ Py-SPW==${{ version }}
