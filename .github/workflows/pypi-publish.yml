@@ -68,4 +68,4 @@ jobs:
         python-version: '3.x'
     - name: Test
       run: |
-        pip install -i https://test.pypi.org/simple/ Py-SPW==${{ version }}
+        pip install -i https://test.pypi.org/simple/ Py-SPW==${{ github.run_id }}-${{ github.run_attempt }}
