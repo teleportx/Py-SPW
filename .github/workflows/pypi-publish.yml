@@ -43,6 +43,9 @@ jobs:
         with:
           python-version: '3.x'
       - name: Test
+        with:
+          name: python-package-distributions
+          path: dist/
         run: |
           ls
           ls dist
