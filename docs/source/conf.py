@@ -5,6 +5,7 @@
 
 import os
 import sys
+from datetime import datetime
 
 sys.path.insert(0, os.path.abspath('../..'))
 
@@ -14,7 +15,7 @@ exec(sorted([el if el.startswith('__version__') else 'Z' for el in open('../../p
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
 
 project = 'Py-SPW'
-copyright = '2023, Teleport'
+copyright = f'{datetime.now().year}, Teleport'
 author = 'Teleport'
 release = __version__
 
