@@ -1,6 +1,6 @@
 name: Publish Package
 
-on: pull
+on: push
 
 env:
   version: ${{ github.run_id }}.post${{ github.run_attempt }}
@@ -63,6 +63,7 @@ jobs:
 
     permissions:
       id-token: write  # IMPORTANT: mandatory for trusted publishing
+    if: github.event_name == 'pull_request'
 
     steps:
     - name: Download all the dists
