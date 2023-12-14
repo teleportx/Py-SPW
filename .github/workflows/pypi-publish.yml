@@ -1,9 +1,9 @@
 name: Publish Package
 
-on: push
+on: pull
 
 env:
-  version: ${{ github.run_id }}-${{ github.run_attempt }}
+  version: ${{ github.run_id }}.post${{ github.run_attempt }}
 
 jobs:
   build:
@@ -74,3 +74,7 @@ jobs:
       uses: pypa/gh-action-pypi-publish@release/v1
       with:
         repository-url: https://test.pypi.org/legacy/
+    - name: Test
+      run: |
+        echo Release published on https://test.pypi.org/project/Py-SPW/$version/
+        echo Install - pip install -i https://test.pypi.org/simple/ Py-SPW==$version
