@@ -1,7 +1,7 @@
 [![PyPI version](https://badge.fury.io/py/Py-SPW.svg)](https://pypi.org/project/Py-SPW/)
 [![python](https://img.shields.io/badge/python-3.7%20%7C%203.8%20%7C%203.9%20%7C%203.10%20%7C%203.11-blue)](https://pypi.org/project/Py-SPW/)
 
-[![Documentation Status](https://readthedocs.org/projects/py-spw/badge/?version=latest)](https://pyspw.xstl.ru/en/latest/)
+[![Documentation Status](https://github.com/teleportx/Py-SPW/actions/workflows/docs-publish.yml/badge.svg)](https://pyspw.xstl.ru/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://github.com/teleportx/Py-SPW/blob/main/LICENSE)
 [![Downloads](https://img.shields.io/pypi/dm/Py-SPW)](https://pypi.org/project/Py-SPW/)
 
@@ -35,5 +35,5 @@ print(api.check_access('437610383310716930'))
 
 ## Links
 - [PyPi](https://pypi.org/project/Py-SPW)
-- [Documentation](https://pyspw.xstl.ru/en/latest/)
+- [Documentation](https://pyspw.xstl.ru/)
 - [API](https://github.com/sp-worlds/api-docs)
