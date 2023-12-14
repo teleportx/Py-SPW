@@ -63,7 +63,7 @@ jobs:
 
     permissions:
       id-token: write  # IMPORTANT: mandatory for trusted publishing
-    if: github.event_name == 'pull_request'
+    if: github.ref == 'refs/heads/dev'
 
     steps:
     - name: Download all the dists
