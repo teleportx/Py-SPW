@@ -24,7 +24,6 @@ release = __version__
 
 extensions = [
     "sphinx.ext.autodoc",
-    "furo",
 ]
 
 templates_path = ['_templates']

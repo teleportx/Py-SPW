@@ -9,18 +9,18 @@ jobs:
       contents: write
     steps:
     - uses: actions/checkout@v4
-    - name: Install requirements
+    - name: Build docs
       run: |
         pip install -r ./docs/source/requirements.txt
         pip install -r ./requirements.txt
-        python -c "import furo"
-    - name: Build HTML
-      uses: ammaraskar/sphinx-action@master
+        sphinx-build -M html docs/source docs/build
+
     - name: Upload artifacts
       uses: actions/upload-artifact@v3
       with:
         name: html-docs
         path: docs/build/html/
+
     - name: Deploy
       uses: peaceiris/actions-gh-pages@v3
       if: github.ref == 'refs/heads/main'
