@@ -47,7 +47,10 @@ class SpApi:
         self._authorization = f"Bearer {str(b64encode(str(f'{card_id}:{card_token}').encode('utf-8')), 'utf-8')}"
 
     def _request(self, method: _RequestTypes, path: str = '', body: dict = None, *,
-                 ignore_codes: list = []) -> rq.Response:
+                 ignore_codes=None) -> rq.Response:
+        if ignore_codes is None:
+            ignore_codes = []
+
         headers = {
             'Authorization': self._authorization,
             'User-Agent': f'Py-SPW (Python {platform.python_version()})'
