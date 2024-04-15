@@ -5,7 +5,7 @@ import requests as rq
 import validators
 from mojang import API as MAPI
 from mojang._types import UserProfile
-from pydantic import BaseModel, validator
+from pydantic import BaseModel, field_validator
 
 from . import errors as err
 from .errors import MojangAccountNotFound
@@ -40,19 +40,19 @@ class Payment(BaseModel):
     webhookUrl: str
     data: str
 
-    @validator('amount')
+    @field_validator('amount')
     def _max_amount(cls, value: int):
         if value > 1728:
             raise err.BigAmountError()
         return value
 
-    @validator('data')
+    @field_validator('data')
     def _data_size(cls, value):
         if len(value) > 100:
             raise err.LengthError(100)
         return value
 
-    @validator('redirectUrl', 'webhookUrl')
+    @field_validator('redirectUrl', 'webhookUrl')
     def _verify_url(cls, value: str):
         if validators.url(value):
             return value
@@ -80,13 +80,13 @@ class Transaction(BaseModel):
     amount: int
     comment: str
 
-    @validator('comment')
+    @field_validator('comment')
     def _comment_size(cls, value: str):
         if len(value) > 32:
             raise err.LengthError(32)
         return value
 
-    @validator('receiver')
+    @field_validator('receiver')
     def _receiver_type(cls, value: str):
         if len(value) != 5 or not value.isnumeric():
             raise err.IsNotCardError(value)
@@ -132,7 +132,7 @@ class _SkinPart:
         """
 
         try:
-            visage_surgeplay_response = rq.get(self.__skin_part_url, headers=headers)
+            visage_surgeplay_response = rq.get(self.__skin_part_url)
             if visage_surgeplay_response.status_code != 200:
                 raise err.SurgeplayApiError(f'HTTP status: {visage_surgeplay_response.status_code}')
             return visage_surgeplay_response.content

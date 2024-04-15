@@ -148,7 +148,7 @@ class SpApi:
 
             :return: Ссылку на страницу оплаты, на которую стоит перенаправить пользователя.
         """
-        return self._request(_RequestTypes.POST, '/payment', payment.dict()).json()['url']
+        return self._request(_RequestTypes.POST, '/payment', payment.model_dump()).json()['url']
 
     def send_transaction(self, transaction: models.Transaction) -> None:
         """
@@ -160,7 +160,7 @@ class SpApi:
             :raises SpwInsufficientFunds: Недостаточно средств на карте.
             :raises SpwCardNotFound: Карта получателя не найдена.
         """
-        response = self._request(_RequestTypes.POST, '/transactions', transaction.dict(), ignore_codes=[400])
+        response = self._request(_RequestTypes.POST, '/transactions', transaction.model_dump(), ignore_codes=[400])
         if response.status_code == 400:
             msg = response.json()["message"]
             if msg == 'Недостаточно средств на карте':
