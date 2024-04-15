@@ -1,7 +1,7 @@
 import json
 
 import pyspw
-from pyspw.Parameters import Payment
+from pyspw.models import Payment
 
 
 # Init library

@@ -12,8 +12,7 @@ import logging
 from mojang import API as MAPI
 
 from . import errors as err
-from .User import User
-from .Parameters import Payment, Transaction
+from . import models
 
 mapi = MAPI()
 
@@ -93,7 +92,7 @@ class SpApi:
         except err.SpwApiError:
             return False
 
-    def get_user(self, discord_id: str) -> User:
+    def get_user(self, discord_id: str) -> models.User:
         """
             Получение пользователя.
 
@@ -109,7 +108,7 @@ class SpApi:
         if response.status_code == 404:
             raise err.SpwUserNotFound(discord_id)
 
-        return User(response.json()['username'])
+        return models.User(response.json()['username'])
 
     def check_access(self, discord_id: str) -> bool:
         """
@@ -140,7 +139,7 @@ class SpApi:
         base64_data = b64encode(hmac_data)
         return hmac.compare_digest(base64_data, X_Body_Hash.encode('utf-8'))
 
-    def create_payment(self, payment: Payment) -> str:
+    def create_payment(self, payment: models.Payment) -> str:
         """
             Создание ссылки на оплату.
 
@@ -151,7 +150,7 @@ class SpApi:
         """
         return self._request(_RequestTypes.POST, '/payment', payment.dict()).json()['url']
 
-    def send_transaction(self, transaction: Transaction) -> None:
+    def send_transaction(self, transaction: models.Transaction) -> None:
         """
             Отправка транзакции.
             
@@ -194,7 +193,7 @@ class SpApi:
 
         return users
 
-    def get_users(self, discord_ids: List[str], delay: float = 0.3) -> List[User]:
+    def get_users(self, discord_ids: List[str], delay: float = 0.3) -> List[models.User]:
         """
             Получение пользователей.
 
@@ -224,7 +223,7 @@ class SpApi:
         """
         return self._many_req(discord_ids, self.check_access, delay)
 
-    def create_payments(self, payments: List[Payment], delay: float = 0.5) -> List[str]:
+    def create_payments(self, payments: List[models.Payment], delay: float = 0.5) -> List[str]:
         """
             Создание ссылок на оплату.
 
@@ -238,7 +237,7 @@ class SpApi:
         """
         return self._many_req(payments, self.create_payment, delay)
 
-    def send_transactions(self, transactions: List[Transaction], delay: float = 0.5) -> None:
+    def send_transactions(self, transactions: List[models.Transaction], delay: float = 0.5) -> None:
         """
             Отправка транзакций.
 

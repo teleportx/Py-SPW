@@ -1,5 +1,5 @@
 import pyspw
-from pyspw.Parameters import Transaction
+from pyspw.models import Transaction
 
 
 # Init library
