@@ -93,7 +93,7 @@ class Transaction(BaseModel):
         return value
 
 
-class CardInfo(BaseModel):
+class Card(BaseModel):
     balance: int
     webhookUrl: str
 

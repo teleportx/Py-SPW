@@ -166,13 +166,21 @@ class SpApi:
             elif msg == 'Карты не существует':
                 raise err.SpwCardNotFound()
 
+    def card(self) -> models.Card:
+        """
+            Получение информации о карте.
+
+            :return: Card класс с информации о карте.
+        """
+        return models.Card.model_validate_json(self._request(_RequestTypes.GET, '/card').text)
+
     def get_balance(self) -> int:
         """
             Получение баланса.
 
             :return: Значения баланса карты.
         """
-        return self._request(_RequestTypes.GET, '/card').json()['balance']
+        return self.card().balance
 
     # ---------------------------------
     # ------------- Manys -------------
