@@ -8,8 +8,6 @@ from mojang._types import UserProfile
 from pydantic import BaseModel, field_validator
 
 from . import errors as err
-from .errors import MojangAccountNotFound
-
 
 mapi = MAPI()
 
@@ -152,6 +150,12 @@ class Skin:
     def variant(self) -> SkinVariant:
         return self._variant
 
+    @property
+    def cape(self) -> Optional[_SkinPart]:
+        if self._profile.cape_url is None:
+            return None
+        return _SkinPart(self._profile.cape_url)
+
     def get_face(self, image_size: int = 64) -> _SkinPart:
         return _SkinPart(f'https://visage.surgeplay.com/face/{image_size}/{self._profile.id}')
 
@@ -173,35 +177,16 @@ class Skin:
     def get_skin(self, image_size: int = 64) -> _SkinPart:
         return _SkinPart(f'https://visage.surgeplay.com/skin/{image_size}/{self._profile.id}')
 
-    def get_cape(self) -> Optional[_SkinPart]:
-        if self._profile.cape_url is None:
-            return None
-        return _SkinPart(self._profile.cape_url)
 
+class User(BaseModel):
+    nickname: Optional[str]
+    uuid: Optional[str]
 
-class User:
-    def __init__(self, nickname: str):
-        self._nickname = nickname
-        self._uuid = mapi.get_uuid(nickname)
-        if self._uuid is None:
-            raise MojangAccountNotFound(self._nickname)
-        self._profile = mapi.get_profile(self._uuid)
+    def get_profile(self) -> Optional[UserProfile]:
+        if self.uuid is None:
+            return
 
-    @property
-    def nickname(self) -> str:
-        return self._nickname
-
-    @property
-    def uuid(self) -> str:
-        return self._uuid
-
-    @property
-    def profile(self) -> UserProfile:
-        return self._profile
+        return mapi.get_profile(self.uuid)
 
     def get_skin(self) -> Skin:
-        """
-        Получения объекта скина пользователя.
-        """
-        return Skin(self._profile)
-
+        return Skin(self.get_profile())

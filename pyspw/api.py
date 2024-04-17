@@ -105,7 +105,7 @@ class SpApi:
         if response.status_code == 404:
             raise err.SpwUserNotFound(discord_id)
 
-        return models.User(response.json()['username'])
+        return models.User.model_validate_json(response.text)
 
     def check_access(self, discord_id: str) -> bool:
         """
