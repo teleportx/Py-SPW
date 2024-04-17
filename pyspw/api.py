@@ -60,10 +60,7 @@ class SpApi:
         except rq.exceptions.ConnectionError as error:
             raise err.SpwApiError(error)
 
-        try:
-            response.json()
-
-        except json.JSONDecodeError:
+        if response.headers.get('Content-Type') != 'application/json':
             raise err.SpwApiDDOS()
 
         if response.ok or response.status_code in ignore_codes:
