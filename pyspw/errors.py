@@ -7,18 +7,27 @@ class _ApiError(_Error):
 
 
 class SpwApiError(_ApiError):
-    pass
+    def __init__(self, status_code: int, text: str = None, extra_info: str = ''):
+        self.status_code = status_code
+
+        if extra_info != '':
+            extra_info = ' ' + extra_info
+
+        if text is None:
+            text = f'Raised not OK status. HTTP: {status_code}.'
+
+        super().__init__(text + extra_info)
 
 
 class SpwApiDDOS(SpwApiError):
     def __init__(self):
-        super().__init__("SPWorlds DDOS protection block your request")
+        super().__init__(429, "SPWorlds DDOS protection block your request")
 
 
 class SpwUserNotFound(SpwApiError):
     def __init__(self, discord_id: str):
         self._discord_id = discord_id
-        super().__init__(f"User with discord id `{discord_id}` not found in spworlds")
+        super().__init__(404, f"User with discord id `{discord_id}` not found in spworlds")
 
     @property
     def discord_id(self) -> str:
@@ -27,17 +36,17 @@ class SpwUserNotFound(SpwApiError):
 
 class SpwUnauthorized(SpwApiError):
     def __init__(self):
-        super().__init__("Access details are invalid")
+        super().__init__(401, "Access details are invalid")
 
 
 class SpwInsufficientFunds(SpwApiError):
     def __init__(self):
-        super().__init__("Insufficient funds on the card")
+        super().__init__(400, "Insufficient funds on the card")
 
 
 class SpwCardNotFound(SpwApiError):
     def __init__(self):
-        super().__init__("Receiver card not found")
+        super().__init__(404, "Receiver card not found")
 
 
 class MojangApiError(_ApiError):

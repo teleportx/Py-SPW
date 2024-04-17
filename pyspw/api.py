@@ -13,13 +13,9 @@ from mojang import API as MAPI
 
 from . import errors as err
 from . import models
+from .methods.base import RequestTypes
 
 mapi = MAPI()
-
-
-class _RequestTypes(Enum):
-    POST = 'POST'
-    GET = 'GET'
 
 
 @dataclass
@@ -39,42 +35,10 @@ class SpApi:
     :type card_token: str
     """
 
-    _spworlds_api_url = 'https://spworlds.ru/api/public'
-
     def __init__(self, card_id: str, card_token: str):
         self._card = _Card(card_id, card_token)
         self._authorization = f"Bearer {str(b64encode(str(f'{card_id}:{card_token}').encode('utf-8')), 'utf-8')}"
 
-    def _request(self, method: _RequestTypes, path: str = '', body: dict = None, *,
-                 ignore_codes=None) -> rq.Response:
-        if ignore_codes is None:
-            ignore_codes = []
-
-        headers = {
-            'Authorization': self._authorization,
-            'User-Agent': f'Py-SPW (Python {platform.python_version()})'
-        }
-        try:
-            response = rq.request(method.value, url=self._spworlds_api_url + path, headers=headers, json=body)
-
-        except rq.exceptions.ConnectionError as error:
-            raise err.SpwApiError(error)
-
-        if response.headers.get('Content-Type') != 'application/json':
-            raise err.SpwApiDDOS()
-
-        if response.ok or response.status_code in ignore_codes:
-            return response
-
-        elif response.status_code == 401:
-            raise err.SpwUnauthorized()
-
-        elif response.status_code >= 500:
-            raise err.SpwApiError(f'HTTP: {response.status_code}, Server Error.')
-
-        else:
-            raise err.SpwApiError(
-                f'HTTP: {response.status_code} {response.json()["error"]}. Message: {response.json()["message"]}')
 
     def ping(self) -> bool:
         """
@@ -101,7 +65,7 @@ class SpApi:
             :raises SpwUserNotFound: Пользователь не был найден.
         """
 
-        response = self._request(_RequestTypes.GET, f'/users/{discord_id}', ignore_codes=[404])
+        response = self._request(RequestTypes.GET, f'/users/{discord_id}', ignore_codes=[404])
         if response.status_code == 404:
             raise err.SpwUserNotFound(discord_id)
 
@@ -116,7 +80,7 @@ class SpApi:
 
             :return: Состояние проходки пользователя.
         """
-        response = self._request(_RequestTypes.GET, f'/users/{discord_id}', ignore_codes=[404])
+        response = self._request(RequestTypes.GET, f'/users/{discord_id}', ignore_codes=[404])
         return response.status_code != 404
 
     def check_webhook(self, webhook_data: str, X_Body_Hash: str) -> bool:
@@ -145,7 +109,7 @@ class SpApi:
 
             :return: Ссылку на страницу оплаты, на которую стоит перенаправить пользователя.
         """
-        return self._request(_RequestTypes.POST, '/payment', payment.model_dump()).json()['url']
+        return self._request(RequestTypes.POST, '/payment', payment.model_dump()).json()['url']
 
     def send_transaction(self, transaction: models.Transaction) -> None:
         """
@@ -157,7 +121,7 @@ class SpApi:
             :raises SpwInsufficientFunds: Недостаточно средств на карте.
             :raises SpwCardNotFound: Карта получателя не найдена.
         """
-        response = self._request(_RequestTypes.POST, '/transactions', transaction.model_dump(), ignore_codes=[400])
+        response = self._request(RequestTypes.POST, '/transactions', transaction.model_dump(), ignore_codes=[400])
         if response.status_code == 400:
             msg = response.json()["message"]
             if msg == 'Недостаточно средств на карте':
@@ -166,13 +130,13 @@ class SpApi:
             elif msg == 'Карты не существует':
                 raise err.SpwCardNotFound()
 
-    def card(self) -> models.Card:
-        """
-            Получение информации о карте.
-
-            :return: Card класс с информации о карте.
-        """
-        return models.Card.model_validate_json(self._request(_RequestTypes.GET, '/card').text)
+    # def card(self) -> models.SelfCard:
+    #     """
+    #         Получение информации о карте.
+    #
+    #         :return: Card класс с информации о карте.
+    #     """
+    #     return models.SelfCard.model_validate_json(self._request(_RequestTypes.GET, '/card').text)
 
     def get_balance(self) -> int:
         """
