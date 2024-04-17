@@ -1,15 +1,21 @@
+from typing import Optional, List
+
 import validators
 from pydantic import BaseModel, field_validator, Field
 
 from .. import errors as err
 
 
+class PaymentItem(BaseModel):
+    name: str = Field(min_length=3, max_length=64)
+    count: int = Field(ge=0, le=9999)
+    price: int = Field(gt=1, le=1728)
+    comment: Optional[str] = Field(min_length=3, max_length=64)
+
+
 class Payment(BaseModel):
     """
     Класс параметров оплаты.
-
-    :param amount: Сумма которую должен оплатить пользователь.
-    :type amount: int
 
     :param redirectUrl: Ссылка на которую перенаправит пользователя после успешной оплаты.
     :type redirectUrl: str
@@ -25,6 +31,7 @@ class Payment(BaseModel):
     :raises IsNotURLError: Параметр не является URL
     """
 
+    items: List[PaymentItem] = Field(min_length=1)
     redirectUrl: str
     webhookUrl: str
     data: str = Field(max_length=100)

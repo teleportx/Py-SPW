@@ -1,6 +1,7 @@
 from .Card import Card, SelfCard
 from .Transaction import Transaction, Payment
 from .User import User, SelfUser, Skin, SkinVariant, City
+from .ServerAnswers import CreatePaymentAnswer
 
 
 __all__ = [
@@ -15,4 +16,6 @@ __all__ = [
     'Skin',
     'SkinVariant',
     'City',
+
+    'CreatePaymentAnswer',
 ]
