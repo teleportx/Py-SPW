@@ -1,5 +1,5 @@
 import validators
-from pydantic import BaseModel, field_validator
+from pydantic import BaseModel, field_validator, Field
 
 from .. import errors as err
 
@@ -25,22 +25,9 @@ class Payment(BaseModel):
     :raises IsNotURLError: Параметр не является URL
     """
 
-    amount: int
     redirectUrl: str
     webhookUrl: str
-    data: str
-
-    @field_validator('amount')
-    def _max_amount(cls, value: int):
-        if value > 1728:
-            raise err.BigAmountError()
-        return value
-
-    @field_validator('data')
-    def _data_size(cls, value):
-        if len(value) > 100:
-            raise err.LengthError(100)
-        return value
+    data: str = Field(max_length=100)
 
     @field_validator('redirectUrl', 'webhookUrl')
     def _verify_url(cls, value: str):
@@ -68,13 +55,7 @@ class Transaction(BaseModel):
 
     receiver: str
     amount: int
-    comment: str
-
-    @field_validator('comment')
-    def _comment_size(cls, value: str):
-        if len(value) > 32:
-            raise err.LengthError(32)
-        return value
+    comment: str = Field(max_length=32)
 
     @field_validator('receiver')
     def _receiver_type(cls, value: str):
