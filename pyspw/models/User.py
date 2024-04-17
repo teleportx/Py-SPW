@@ -1,11 +1,13 @@
+from datetime import datetime
 from enum import Enum
-from typing import Optional
+from typing import Optional, List
 
 import requests as rq
 from mojang import API as MAPI
 from mojang._types import UserProfile
-from pydantic import BaseModel
+from pydantic import BaseModel, computed_field
 
+from . import Card
 from .. import errors as err
 
 mapi = MAPI()
@@ -93,6 +95,16 @@ class Skin:
         return _SkinPart(f'https://visage.surgeplay.com/skin/{image_size}/{self._profile.id}')
 
 
+class City(BaseModel):
+    id: str
+    name: str
+    description: str
+
+    x: int
+    z: int
+    isMayor: bool
+
+
 class User(BaseModel):
     nickname: Optional[str]
     uuid: Optional[str]
@@ -105,3 +117,20 @@ class User(BaseModel):
 
     def get_skin(self) -> Skin:
         return Skin(self.get_profile())
+
+
+class SelfUser(BaseModel):
+    id: str
+    username: str
+
+    @computed_field
+    def uuid(self) -> Optional[str]:
+        return mapi.get_uuid(self.username)
+
+    status: str
+    city: Optional[City]
+
+    roles: List[str]
+    cards: List[Card]
+
+    createdAt: datetime
