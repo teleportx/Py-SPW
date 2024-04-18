@@ -1,5 +1,5 @@
-from pyspw.methods.base import BaseMethod, RequestTypes
-from pyspw.models import CreatePaymentAnswer, Payment
+from ..methods.base import BaseMethod, RequestTypes
+from ..models import CreatePaymentAnswer, Payment
 
 
 class CreatePayment(BaseMethod[CreatePaymentAnswer]):

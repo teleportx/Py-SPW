@@ -1,8 +1,8 @@
 import validators
 
-from pyspw import errors
-from pyspw.methods.base import BaseMethod, RequestTypes
-from pyspw.models import SetTransactionWebhookAnswer
+from .. import errors
+from ..methods.base import BaseMethod, RequestTypes
+from ..models import SetTransactionWebhookAnswer
 
 
 class SetTransactionWebhook(BaseMethod[SetTransactionWebhookAnswer]):

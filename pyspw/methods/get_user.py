@@ -1,5 +1,5 @@
-from pyspw.methods.base import BaseMethod, RequestTypes
-from pyspw.models import User
+from ..methods.base import BaseMethod, RequestTypes
+from ..models import User
 
 
 class GetUser(BaseMethod[User]):

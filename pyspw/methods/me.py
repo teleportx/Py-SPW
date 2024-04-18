@@ -1,5 +1,5 @@
-from pyspw.methods.base import BaseMethod, RequestTypes
-from pyspw.models import SelfUser
+from ..methods.base import BaseMethod, RequestTypes
+from ..models import SelfUser
 
 
 class Me(BaseMethod[SelfUser]):

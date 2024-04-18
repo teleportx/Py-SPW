@@ -1,7 +1,7 @@
 from typing import List
 
-from pyspw.methods.base import BaseMethod, RequestTypes
-from pyspw.models import Card
+from ..methods.base import BaseMethod, RequestTypes
+from ..models import Card
 
 
 class GetUserCards(BaseMethod[List[Card]]):

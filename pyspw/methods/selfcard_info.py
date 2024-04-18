@@ -1,5 +1,5 @@
-from pyspw.methods.base import BaseMethod, RequestTypes
-from pyspw.models import SelfCard
+from ..methods.base import BaseMethod, RequestTypes
+from ..models import SelfCard
 
 
 class GetSelfCardInfo(BaseMethod[SelfCard]):
