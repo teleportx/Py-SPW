@@ -7,3 +7,8 @@ class CreatePaymentAnswer(BaseModel):
 
 class CreateTransactionAnswer(BaseModel):
     balance: int
+
+
+class SetTransactionWebhookAnswer(BaseModel):
+    id: str
+    webhook: str

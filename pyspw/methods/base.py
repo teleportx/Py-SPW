@@ -16,6 +16,7 @@ ReturnType = TypeVar('ReturnType', BaseModel, List[BaseModel])
 class RequestTypes(Enum):
     POST = 'POST'
     GET = 'GET'
+    PUT = 'PUT'
 
 
 class BaseMethod(ABC, Generic[ReturnType]):
