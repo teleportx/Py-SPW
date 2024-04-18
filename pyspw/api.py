@@ -2,7 +2,6 @@ import hmac
 import logging
 import time
 from base64 import b64encode
-from functools import cached_property
 from hashlib import sha256
 from typing import List, Callable
 from warnings import warn
@@ -20,7 +19,7 @@ class AuthorizationPair(BaseModel):
     token: str
 
     @computed_field
-    @cached_property
+    @property
     def authorization(self) -> str:
         return f'Bearer ' + str(b64encode(str(f'{self.id}:{self.token}').encode('utf-8')), 'utf-8')
 
