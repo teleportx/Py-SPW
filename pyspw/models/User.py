@@ -1,5 +1,6 @@
 from datetime import datetime
 from enum import Enum
+from functools import cached_property
 from typing import Optional, List
 
 import requests as rq
@@ -124,6 +125,7 @@ class SelfUser(BaseModel):
     username: str
 
     @computed_field
+    @cached_property
     def uuid(self) -> Optional[str]:
         return mapi.get_uuid(self.username)
 
