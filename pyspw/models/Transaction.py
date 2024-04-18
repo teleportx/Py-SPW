@@ -26,8 +26,6 @@ class Payment(BaseModel):
     :param data: Полезные данные, которые вы хотите получить в будущем вместе с вебхуком.
     :type data: str
 
-    :raises BigAmountError: Запрашиваемая сумма слишком большая *(макс. 1728)*
-    :raises LengthError: Строка data слишком длинная *(макс. 100)*
     :raises IsNotURLError: Параметр не является URL
     """
 
@@ -56,7 +54,6 @@ class Transaction(BaseModel):
     :param comment: Комментарий к транзакции.
     :type comment: str
 
-    :raises LengthError: Комментарий к транзакции comment слишком длинный *(макс. 32)*
     :raises IsNotCardError: Неверно указана карта получателя
     """
 
