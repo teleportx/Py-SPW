@@ -2,7 +2,7 @@ from ..methods.base import BaseMethod, RequestTypes
 from ..models import SelfUser
 
 
-class Me(BaseMethod[SelfUser]):
+class GetMe(BaseMethod[SelfUser]):
     """
     Получает всю информацию о владельце токена.
 
