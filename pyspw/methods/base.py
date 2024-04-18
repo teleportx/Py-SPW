@@ -24,14 +24,12 @@ class BaseMethod(ABC, Generic[ReturnType]):
     __method__: str
     __request_type__: RequestTypes
 
-    _authorization: str
-
     def __init__(self, **kwargs):
         self._body = kwargs
 
-    def _request(self) -> rq.Response:
+    def _request(self, authorization: str) -> rq.Response:
         headers = {
-            'Authorization': self._authorization,
+            'Authorization': authorization,
             'User-Agent': f'Py-SPW (Python {platform.python_version()})'
         }
 
@@ -63,15 +61,15 @@ class BaseMethod(ABC, Generic[ReturnType]):
         else:
             raise err.SpwApiError(response.status_code, response.json()['error'], response.json()['message'])
 
-    def __call__(self) -> ReturnType:
+    def __call__(self, authorization: str) -> ReturnType:
         if hasattr(self.__returns__, '__args__') and \
                 isinstance(self.__returns__.__args__, Tuple) and \
                 len(self.__returns__.__args__) > 0 and \
                 self.__returns__ == List[self.__returns__.__args__[0]]:
             res = []
-            for el in self._request():
+            for el in self._request(authorization):
                 res.append(self.__returns__.__args__[0].model_validate(el))
 
             return res
 
-        return self.__returns__.model_validate_json(self._request().text)
+        return self.__returns__.model_validate_json(self._request(authorization).text)
