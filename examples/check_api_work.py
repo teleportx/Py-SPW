@@ -1,9 +1,9 @@
 import pyspw
 
-# Init library
+# Инициализация класса
 api = pyspw.SpApi(card_id='card_id',
                   card_token='card_token')
 
 
-# Checking
+# Проверяем
 print(api.ping())
