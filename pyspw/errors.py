@@ -9,6 +9,8 @@ class _ApiError(_Error):
 class SpwApiError(_ApiError):
     def __init__(self, status_code: int, text: str = None, extra_info: str = ''):
         self.status_code = status_code
+        self.text = text
+        self.extra_info = extra_info
 
         if extra_info != '':
             extra_info = ' ' + extra_info
