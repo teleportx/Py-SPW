@@ -15,6 +15,6 @@ class GetUserCards(BaseMethod[List[Card]]):
     __method__ = '/accounts/%s/cards'
     __request_type__ = RequestTypes.GET
 
-    def __init__(self, nickname: str):
+    def __init__(self, username: str):
         super().__init__()
-        self.__method__ %= nickname
+        self.__method__ %= username
