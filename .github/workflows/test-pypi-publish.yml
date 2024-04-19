@@ -49,7 +49,7 @@ jobs:
           python-version: '3.x'
       - name: Test
         run:
-          pip install dist/Py-SPW-${{ github.run_id }}.post${{ github.run_attempt }}.tar.gz
+          pip install dist/py_spw-${{ github.run_id }}.post${{ github.run_attempt }}.tar.gz
 
   publish-to-testpypi:
     name: Publish distribution
@@ -78,4 +78,4 @@ jobs:
     - name: Test
       run: |
         echo Release published on https://test.pypi.org/project/Py-SPW/$version/
-        echo Install - pip install -i https://test.pypi.org/simple/ Py-SPW==$version
+        echo Install - pip install -i https://test.pypi.org/simple/ --extra-index-url https://pypi.org/simple Py-SPW==$version

@@ -1,6 +1,7 @@
 from os import path, environ
 
 from setuptools import setup
+from setuptools.config.expand import find_packages
 
 this_directory = path.abspath(path.dirname(__file__))
 
@@ -17,7 +18,7 @@ if environ.get('version') is not None:
 setup(
     name='Py-SPW',
     version=__version__,
-    packages=['pyspw'],
+    packages=find_packages(),
     url='https://github.com/teleportx/Py-SPW',
     license='MIT License',
     author='Stepan Khozhempo',

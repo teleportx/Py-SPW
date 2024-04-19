@@ -5,6 +5,8 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://github.com/teleportx/Py-SPW/blob/main/LICENSE)
 [![Downloads](https://img.shields.io/pypi/dm/Py-SPW)](https://pypi.org/project/Py-SPW/)
 
+**Follow [telegram channel](https://t.me/xstl_devblog) to receive a notification about new version.**
+
 # Py SPW
 Library for work with [SPWorlds](https://spworlds.ru) API in Python.
 

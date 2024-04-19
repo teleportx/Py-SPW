@@ -23,7 +23,8 @@ release = __version__
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration
 
 extensions = [
-    "sphinx.ext.autodoc",
+    'sphinx.ext.autodoc',
+    'sphinxcontrib.autodoc_pydantic',
 ]
 
 templates_path = ['_templates']
@@ -71,3 +72,6 @@ html_theme_options = {
     "source_branch": "main",
     "source_directory": "docs/source/",
 }
+
+autodoc_pydantic_model_show_json = False
+autodoc_pydantic_model_show_field_summary = False
