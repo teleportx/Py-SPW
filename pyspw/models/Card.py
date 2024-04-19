@@ -5,7 +5,7 @@ from pydantic import BaseModel
 
 class SelfCard(BaseModel):
     balance: int
-    webhook: str
+    webhook: Optional[str]
 
 
 class Card(BaseModel):
