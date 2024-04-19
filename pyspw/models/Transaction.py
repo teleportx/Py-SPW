@@ -5,6 +5,22 @@ from pydantic import BaseModel, field_validator, Field
 
 
 class PaymentItem(BaseModel):
+    """
+    Класс параметров оплаты.
+
+    :param name: Название товара
+    :type name: str
+
+    :param count: Количество товара.
+    :type count: int
+
+    :param price: Цена товара.
+    :type price: int
+
+    :param comment: Комментарий к товару. _(необяз.)_
+    :type comment: str
+    """
+
     name: str = Field(min_length=3, max_length=64)
     count: int = Field(ge=1, le=9999)
     price: int = Field(ge=1, le=1728)
@@ -15,10 +31,13 @@ class Payment(BaseModel):
     """
     Класс параметров оплаты.
 
+    :param items: Список товаров, которые оплачивает пользователь.
+    :type items: List[PaymentItem]
+
     :param redirectUrl: Ссылка на которую перенаправит пользователя после успешной оплаты.
     :type redirectUrl: str
 
-    :param webhookUrl: Ссылка вебхука, туда придет сообщение о успешной оплате.
+    :param webhookUrl: Ссылка вебхука, туда придет сообщение об успешной оплате.
     :type webhookUrl: str
 
     :param data: Полезные данные, которые вы хотите получить в будущем вместе с вебхуком.
