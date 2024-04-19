@@ -74,7 +74,7 @@ class Transaction(BaseModel):
 
     receiver: str
     amount: int
-    comment: str = Field(max_length=32)
+    comment: str = Field(min_length=1, max_length=32)
 
     @field_validator('receiver')
     def _receiver_type(cls, value: str):
