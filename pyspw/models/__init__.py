@@ -4,7 +4,7 @@ from .User import User, SelfUser, Skin, SkinVariant, City
 from .ServerAnswers import CreatePaymentAnswer, CreateTransactionAnswer, SetTransactionWebhookAnswer
 
 
-__all__ = [
+__all__ = (
     'Transaction',
     'Payment',
     'PaymentItem',
@@ -17,4 +17,4 @@ __all__ = [
     'Skin',
     'SkinVariant',
     'City',
-]
+)

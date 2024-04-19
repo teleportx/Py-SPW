@@ -7,7 +7,7 @@ from .get_selfcard_info import GetSelfCardInfo
 from .set_transaction_webhook import SetTransactionWebhook
 
 
-__all__ = [
+__all__ = (
     'CreatePayment',
     'CreateTransaction',
     'GetUser',
@@ -15,4 +15,4 @@ __all__ = [
     'GetMe',
     'GetSelfCardInfo',
     'SetTransactionWebhook'
-]
+)
