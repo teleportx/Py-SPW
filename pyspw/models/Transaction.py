@@ -1,9 +1,7 @@
-from typing import Optional, List, Any
+from typing import List, Any
 
 import validators
-from pydantic import BaseModel, field_validator, Field, ValidationError
-
-from .. import errors as err
+from pydantic import BaseModel, field_validator, Field
 
 
 class PaymentItem(BaseModel):
@@ -26,7 +24,9 @@ class Payment(BaseModel):
     :param data: Полезные данные, которые вы хотите получить в будущем вместе с вебхуком.
     :type data: str
 
-    :raises IsNotURLError: Параметр не является URL
+    :raises ValidationError: webhookUrl не является URL.
+    :raises ValidationError: redirectUrl не является URL.
+    :raises ValidationError: Максимальная сумма превышает 10000.
     """
 
     items: List[PaymentItem] = Field(min_length=1)
@@ -38,7 +38,7 @@ class Payment(BaseModel):
     def _verify_url(cls, value: str):
         if validators.url(value):
             return value
-        raise err.IsNotURLError()
+        raise ValueError('Field is not url.')
 
     @field_validator('items')
     def _verify_items(cls, value: List[PaymentItem]) -> List[PaymentItem]:
@@ -69,7 +69,7 @@ class Transaction(BaseModel):
     :param comment: Комментарий к транзакции.
     :type comment: str
 
-    :raises IsNotCardError: Неверно указана карта получателя
+    :raises ValidationError: Карта получателя имеет неверный формат.
     """
 
     receiver: str
@@ -79,5 +79,5 @@ class Transaction(BaseModel):
     @field_validator('receiver')
     def _receiver_type(cls, value: str):
         if len(value) != 5 or not value.isnumeric():
-            raise err.IsNotCardError(value)
+            raise ValueError(f'Receiver card (`{value}`) number not valid')
         return value
