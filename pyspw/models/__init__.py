@@ -5,12 +5,12 @@ from .ServerAnswers import CreatePaymentAnswer, CreateTransactionAnswer, SetTran
 
 
 __all__ = [
-    'Card',
-    'SelfCard',
-
     'Transaction',
     'Payment',
     'PaymentItem',
+
+    'Card',
+    'SelfCard',
 
     'User',
     'SelfUser',

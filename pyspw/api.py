@@ -31,7 +31,7 @@ class AuthorizationPair(BaseModel):
 
 class SpApi:
     """
-    API класс для работы с spworlds api
+    **API класс для работы с spworlds api**
 
     :param card_id: Индефикатор карты
     :type card_id: str
