@@ -12,4 +12,4 @@ class Card(BaseModel):
     id: Optional[str]
     name: str
     number: str
-    color: Optional[str]
+    color: Optional[int]
