@@ -17,7 +17,7 @@ if environ.get('version') is not None:
 setup(
     name='Py-SPW',
     version=__version__,
-    packages=['pyspw', 'types', 'methods'],
+    packages=['pyspw', 'pyspw/types', 'pyspw/methods'],
     url='https://github.com/teleportx/Py-SPW',
     license='MIT License',
     author='Stepan Khozhempo',
