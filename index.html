@@ -6,9 +6,10 @@
 <link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" /><link rel="next" title="API Reference" href="reference.html" />
 
     <!-- Generated with Sphinx 5.3.0 and Furo 2023.03.27 -->
-        <title>Py-SPW 1.5.3 documentation</title>
+        <title>Py-SPW 2.0.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="_static/styles/furo.css?digest=fad236701ea90a88636c2a8c73b44ae642ed2a53" />
+    <link rel="stylesheet" type="text/css" href="_static/autodoc_pydantic.css" />
     <link rel="stylesheet" type="text/css" href="_static/styles/furo-extensions.css?digest=30d1aed668e5c3a91c3e3bf6a60b675221979f0e" />
     
     
@@ -123,7 +124,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="#"><div class="brand">Py-SPW 1.5.3 documentation</div></a>
+      <a href="#"><div class="brand">Py-SPW 2.0.0 documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -146,7 +147,7 @@
       <div class="sidebar-sticky"><div class="sidebar-scroll"><a class="sidebar-brand" href="#">
   
   
-  <span class="sidebar-brand-text">Py-SPW 1.5.3 documentation</span>
+  <span class="sidebar-brand-text">Py-SPW 2.0.0 documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -156,7 +157,7 @@
 <div id="searchbox"></div><div class="sidebar-tree">
   <ul>
 <li class="toctree-l1"><a class="reference internal" href="reference.html">API Reference</a></li>
-<li class="toctree-l1"><a class="reference internal" href="pyspw.html">pyspw</a></li>
+<li class="toctree-l1"><a class="reference internal" href="models.html">Models</a></li>
 </ul>
 
 </div>
@@ -215,16 +216,16 @@
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">pyspw</span>
 
 
-<span class="c1"># Init library</span>
+<span class="c1"># Инициализация класса</span>
 <span class="n">api</span> <span class="o">=</span> <span class="n">pyspw</span><span class="o">.</span><span class="n">SpApi</span><span class="p">(</span><span class="n">card_id</span><span class="o">=</span><span class="s1">&#39;card_id&#39;</span><span class="p">,</span>
                   <span class="n">card_token</span><span class="o">=</span><span class="s1">&#39;card_token&#39;</span><span class="p">)</span>
 
-<span class="c1"># Check access to server</span>
+<span class="c1"># Проверяем доступ к серверу</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">api</span><span class="o">.</span><span class="n">check_access</span><span class="p">(</span><span class="s1">&#39;287598524017803264&#39;</span><span class="p">))</span>  <span class="c1"># True</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">api</span><span class="o">.</span><span class="n">check_access</span><span class="p">(</span><span class="s1">&#39;289341856083607552&#39;</span><span class="p">))</span>  <span class="c1"># False</span>
 
 
-<span class="c1"># Check more than one access</span>
+<span class="c1"># Проверяем множество айди</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">api</span><span class="o">.</span><span class="n">check_accesses</span><span class="p">([</span><span class="s1">&#39;403987036219899908&#39;</span><span class="p">,</span> <span class="s1">&#39;558667431187447809&#39;</span><span class="p">],</span> <span class="n">delay</span><span class="o">=</span><span class="mi">1</span><span class="p">))</span>  <span class="c1"># False, True</span>
 </pre></div>
 </div>
@@ -241,39 +242,21 @@
 <h1>Documentation<a class="headerlink" href="#documentation" title="Permalink to this heading">#</a></h1>
 <div class="toctree-wrapper compound">
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="reference.html">API Reference</a></li>
-<li class="toctree-l1"><a class="reference internal" href="pyspw.html">pyspw</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="pyspw.html#module-pyspw.api">Api</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="pyspw.html#pyspw.api.SpApi"><code class="docutils literal notranslate"><span class="pre">SpApi</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="reference.html">API Reference</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="reference.html#pyspw.api.SpApi"><code class="docutils literal notranslate"><span class="pre">SpApi</span></code></a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="pyspw.html#module-pyspw.User">User</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="pyspw.html#pyspw.User.Skin"><code class="docutils literal notranslate"><span class="pre">Skin</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="pyspw.html#pyspw.User.SkinVariant"><code class="docutils literal notranslate"><span class="pre">SkinVariant</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="pyspw.html#pyspw.User.User"><code class="docutils literal notranslate"><span class="pre">User</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="pyspw.html#module-pyspw.Parameters">Parameters</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="pyspw.html#pyspw.Parameters.Payment"><code class="docutils literal notranslate"><span class="pre">Payment</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="pyspw.html#pyspw.Parameters.Transaction"><code class="docutils literal notranslate"><span class="pre">Transaction</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="pyspw.html#module-pyspw.errors">Errors</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="pyspw.html#pyspw.errors.BigAmountError"><code class="docutils literal notranslate"><span class="pre">BigAmountError</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="pyspw.html#pyspw.errors.IsNotCardError"><code class="docutils literal notranslate"><span class="pre">IsNotCardError</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="pyspw.html#pyspw.errors.IsNotURLError"><code class="docutils literal notranslate"><span class="pre">IsNotURLError</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="pyspw.html#pyspw.errors.LengthError"><code class="docutils literal notranslate"><span class="pre">LengthError</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="pyspw.html#pyspw.errors.MojangAccountNotFound"><code class="docutils literal notranslate"><span class="pre">MojangAccountNotFound</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="pyspw.html#pyspw.errors.MojangApiError"><code class="docutils literal notranslate"><span class="pre">MojangApiError</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="pyspw.html#pyspw.errors.SpwApiDDOS"><code class="docutils literal notranslate"><span class="pre">SpwApiDDOS</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="pyspw.html#pyspw.errors.SpwApiError"><code class="docutils literal notranslate"><span class="pre">SpwApiError</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="pyspw.html#pyspw.errors.SpwCardNotFound"><code class="docutils literal notranslate"><span class="pre">SpwCardNotFound</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="pyspw.html#pyspw.errors.SpwInsufficientFunds"><code class="docutils literal notranslate"><span class="pre">SpwInsufficientFunds</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="pyspw.html#pyspw.errors.SpwUnauthorized"><code class="docutils literal notranslate"><span class="pre">SpwUnauthorized</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="pyspw.html#pyspw.errors.SpwUserNotFound"><code class="docutils literal notranslate"><span class="pre">SpwUserNotFound</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="pyspw.html#pyspw.errors.SurgeplayApiError"><code class="docutils literal notranslate"><span class="pre">SurgeplayApiError</span></code></a></li>
-</ul>
-</li>
+<li class="toctree-l1"><a class="reference internal" href="models.html">Models</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="models.html#pyspw.models.Transaction"><code class="docutils literal notranslate"><span class="pre">Transaction</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="models.html#pyspw.models.Payment"><code class="docutils literal notranslate"><span class="pre">Payment</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="models.html#pyspw.models.PaymentItem"><code class="docutils literal notranslate"><span class="pre">PaymentItem</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="models.html#pyspw.models.Card"><code class="docutils literal notranslate"><span class="pre">Card</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="models.html#pyspw.models.SelfCard"><code class="docutils literal notranslate"><span class="pre">SelfCard</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="models.html#pyspw.models.User"><code class="docutils literal notranslate"><span class="pre">User</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="models.html#pyspw.models.SelfUser"><code class="docutils literal notranslate"><span class="pre">SelfUser</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="models.html#pyspw.models.Skin"><code class="docutils literal notranslate"><span class="pre">Skin</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="models.html#pyspw.models.SkinVariant"><code class="docutils literal notranslate"><span class="pre">SkinVariant</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="models.html#pyspw.models.City"><code class="docutils literal notranslate"><span class="pre">City</span></code></a></li>
 </ul>
 </li>
 </ul>
@@ -299,7 +282,7 @@
         <div class="bottom-of-page">
           <div class="left-details">
             <div class="copyright">
-                Copyright &#169; 2023, Teleport
+                Copyright &#169; 2024, Teleport
             </div>
             Made with <a href="https://www.sphinx-doc.org/">Sphinx</a> and <a class="muted-link" href="https://pradyunsg.me">@pradyunsg</a>'s
             
