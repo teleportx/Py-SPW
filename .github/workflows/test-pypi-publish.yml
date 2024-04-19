@@ -78,4 +78,4 @@ jobs:
     - name: Test
       run: |
         echo Release published on https://test.pypi.org/project/Py-SPW/$version/
-        echo Install - pip install -i https://test.pypi.org/simple/ Py-SPW==$version
+        echo Install - pip install -i https://test.pypi.org/simple/ --extra-index-url https://pypi.org/simple Py-SPW==$version
