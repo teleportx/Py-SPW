@@ -73,7 +73,7 @@ class Transaction(BaseModel):
     """
 
     receiver: str
-    amount: int
+    amount: int = Field(ge=1)
     comment: str = Field(min_length=1, max_length=32)
 
     @field_validator('receiver')
