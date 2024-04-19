@@ -3,7 +3,7 @@ import logging
 import time
 from base64 import b64encode
 from hashlib import sha256
-from typing import List, Callable
+from typing import List, Callable, Optional
 from warnings import warn
 
 from pydantic import BaseModel, computed_field
@@ -178,12 +178,12 @@ class SpApi:
 
         return self.card().balance
 
-    def set_transaction_webhook(self, url: str):
+    def set_transaction_webhook(self, url: Optional[str]):
         """
             Установка адреса для получения вебхуков о транзакциях по карте.
 
             :param url: Адрес вебхука.
-            :type url: str
+            :type url: Optional[str]
         """
 
         SetTransactionWebhook(

@@ -1,3 +1,5 @@
+from typing import Optional
+
 import validators
 
 from .. import errors
@@ -16,8 +18,8 @@ class SetTransactionWebhook(BaseMethod[SetTransactionWebhookAnswer]):
     __method__ = '/card/webhook'
     __request_type__ = RequestTypes.PUT
 
-    def __init__(self, url: str):
-        if not validators.url(url):
+    def __init__(self, url: Optional[str]):
+        if url is not None and not validators.url(url):
             raise errors.IsNotURLError()
 
         super().__init__(url=url)
