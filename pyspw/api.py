@@ -78,7 +78,7 @@ class SpApi:
 
         except err.SpwApiError as e:
             if e.status_code == 404:
-                raise err.SpwUserNotFound
+                raise err.SpwUserNotFound(discord_id)
 
             raise e
 
