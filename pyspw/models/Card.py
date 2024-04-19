@@ -9,7 +9,7 @@ class SelfCard(BaseModel):
 
 
 class Card(BaseModel):
-    id: Optional[str]
+    id: Optional[str] = None
     name: str
     number: str
-    color: Optional[int]
+    color: Optional[int] = None
