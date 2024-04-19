@@ -62,7 +62,7 @@ class BaseMethod(ABC, Generic[ReturnType]):
             raise err.SpwApiError(response.status_code, extra_info='Remote server error.')
 
         else:
-            raise err.SpwApiError(response.status_code, response.json()['error'], response.json()['message'])
+            raise err.SpwApiError(response.status_code, response.json().get('error'), response.json().get('message'))
 
     def __call__(self, authorization: str) -> ReturnType:
         if hasattr(self.__returns__, '__args__') and \

@@ -7,16 +7,19 @@ class _ApiError(_Error):
 
 
 class SpwApiError(_ApiError):
-    def __init__(self, status_code: int, text: str = None, extra_info: str = ''):
-        self.status_code = status_code
-        self.text = text
-        self.extra_info = extra_info
-
-        if extra_info != '':
+    def __init__(self, status_code: int, text: str = None, extra_info: str = None):
+        if extra_info is not None:
             extra_info = ' ' + extra_info
+
+        else:
+            extra_info = ''
 
         if text is None:
             text = f'Raised not OK status. HTTP: {status_code}.'
+
+        self.status_code = status_code
+        self.text = text
+        self.extra_info = extra_info
 
         super().__init__(text + extra_info)
 
