@@ -1,7 +1,7 @@
 from typing import Optional, List, Any
 
 import validators
-from pydantic import BaseModel, field_validator, Field
+from pydantic import BaseModel, field_validator, Field, ValidationError
 
 from .. import errors as err
 
@@ -39,6 +39,17 @@ class Payment(BaseModel):
         if validators.url(value):
             return value
         raise err.IsNotURLError()
+
+    @field_validator('items')
+    def _verify_items(cls, value: List[PaymentItem]) -> List[PaymentItem]:
+        amount = 0
+        for el in value:
+            amount += el.count * el.price
+
+        if amount > 10000:
+            raise ValueError('Maximal summary amount may be not greater than 10000')
+
+        return value
 
     def model_dump(self, *args, **kwargs) -> Any:
         kwargs['exclude_defaults'] = True
