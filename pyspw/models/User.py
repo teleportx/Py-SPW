@@ -1,6 +1,7 @@
 from datetime import datetime
 from enum import Enum
 from typing import Optional, List
+from warnings import warn
 
 import requests as rq
 from mojang import API as MAPI
@@ -106,8 +107,13 @@ class City(BaseModel):
 
 
 class User(BaseModel):
-    nickname: Optional[str]
+    username: Optional[str]
     uuid: Optional[str]
+
+    @property
+    def nickname(self) -> Optional[str]:
+        warn('Use .username', DeprecationWarning)
+        return self.username
 
     def get_profile(self) -> Optional[UserProfile]:
         if self.uuid is None:
