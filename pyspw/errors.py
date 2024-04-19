@@ -7,18 +7,32 @@ class _ApiError(_Error):
 
 
 class SpwApiError(_ApiError):
-    pass
+    def __init__(self, status_code: int, text: str = None, extra_info: str = None):
+        if extra_info is not None:
+            extra_info = ' ' + extra_info
+
+        else:
+            extra_info = ''
+
+        if text is None:
+            text = f'Raised not OK status. HTTP: {status_code}.'
+
+        self.status_code = status_code
+        self.text = text
+        self.extra_info = extra_info
+
+        super().__init__(text + extra_info)
 
 
 class SpwApiDDOS(SpwApiError):
     def __init__(self):
-        super().__init__("SPWorlds DDOS protection block your request")
+        super().__init__(429, "SPWorlds DDOS protection block your request")
 
 
 class SpwUserNotFound(SpwApiError):
     def __init__(self, discord_id: str):
         self._discord_id = discord_id
-        super().__init__(f"User with discord id `{discord_id}` not found in spworlds")
+        super().__init__(404, f"User with discord id `{discord_id}` not found in spworlds")
 
     @property
     def discord_id(self) -> str:
@@ -27,17 +41,17 @@ class SpwUserNotFound(SpwApiError):
 
 class SpwUnauthorized(SpwApiError):
     def __init__(self):
-        super().__init__("Access details are invalid")
+        super().__init__(401, "Access details are invalid")
 
 
 class SpwInsufficientFunds(SpwApiError):
     def __init__(self):
-        super().__init__("Insufficient funds on the card")
+        super().__init__(400, "Insufficient funds on the card")
 
 
 class SpwCardNotFound(SpwApiError):
     def __init__(self):
-        super().__init__("Receiver card not found")
+        super().__init__(404, "Receiver card not found")
 
 
 class MojangApiError(_ApiError):
@@ -56,23 +70,3 @@ class MojangAccountNotFound(MojangApiError):
 
 class SurgeplayApiError(_ApiError):
     pass
-
-
-class LengthError(ValueError):
-    def __init__(self, max_length: int):
-        super().__init__(f"length must be <= {max_length}.")
-
-
-class BigAmountError(ValueError):
-    def __init__(self):
-        super().__init__(f"amount must be <= 1728.")
-
-
-class IsNotURLError(ValueError):
-    def __init__(self):
-        super().__init__(f"is not url.")
-
-
-class IsNotCardError(ValueError):
-    def __init__(self, card: str):
-        super().__init__(f"Receiver card (`{card}`) number not valid")

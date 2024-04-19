@@ -1,7 +1,7 @@
-API Reference
-=============
+Models
+======
 
-.. autoclass:: pyspw.api.SpApi
+.. automodule:: pyspw.models
    :members:
    :undoc-members:
    :show-inheritance:

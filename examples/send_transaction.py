@@ -1,37 +1,36 @@
 import pyspw
-from pyspw.Parameters import Transaction
+from pyspw.models import Transaction
 
 
-# Init library
+# Инициализация класса
 api = pyspw.SpApi(card_id='card_id',
                   card_token='card_token')
 
 
-# Constructing transaction
+# Собираем транзакцию
 transaction = Transaction(
-    receiver='00001',  # Card number of receiver
-    amount=24,  # Amount of diamond ore which you want to send
-    comment='Buy diamond pickaxe'  # Comment on transaction
+    receiver='00001',              # Номер карты получателя
+    amount=24,                     # Сумма, которую вы хотите отправить
+    comment='Buy diamond pickaxe'  # Комментарий для транзакции
 )
 
-# Send transaction
+# Отправляем транзакцию
 api.send_transaction(transaction)
 
 
-# Send more than one transaction
+# Отправляем больше чем одну транзакцию
 salary = Transaction(
     receiver='00002',
     amount=100,
     comment='Salary for the January'
 )
 
-
-# You can get information from Transaction class
+# Вы можете получать информацию о транзакции из класса
 tax = Transaction(
     receiver='00001',
-    amount=round(salary.amount * 0.2),  # take 20% from salary amount
+    amount=round(salary.amount * 0.2),  # берем 20% с зарплаты
     comment=f'Tax from `{salary.comment}`'
 )
 
-# Send transactions
+# Отправляем транзакции
 api.send_transactions([tax, salary], delay=0.8)
