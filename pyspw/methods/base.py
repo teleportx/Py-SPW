@@ -44,8 +44,11 @@ class BaseMethod(ABC, Generic[ReturnType]):
         except rq.exceptions.ConnectionError as error:
             raise err.SpwApiError(0, error.strerror)
 
-        # Verifying JSON
-        if response.headers.get('Content-Type') != 'application/json':
+        # Verifying DDOS
+        try:
+            response.json()
+
+        except rq.exceptions.JSONDecodeError:
             raise err.SpwApiDDOS()
 
         # Verifying status codes
