@@ -1,4 +1,4 @@
-from typing import Optional, List
+from typing import Optional, List, Any
 
 import validators
 from pydantic import BaseModel, field_validator, Field
@@ -10,7 +10,7 @@ class PaymentItem(BaseModel):
     name: str = Field(min_length=3, max_length=64)
     count: int = Field(ge=0, le=9999)
     price: int = Field(ge=1, le=1728)
-    comment: Optional[str] = Field(min_length=3, max_length=64)
+    comment: str = Field(min_length=3, max_length=64, default=None)
 
 
 class Payment(BaseModel):
@@ -39,6 +39,10 @@ class Payment(BaseModel):
         if validators.url(value):
             return value
         raise err.IsNotURLError()
+
+    def model_dump(self, *args, **kwargs) -> Any:
+        kwargs['exclude_defaults'] = True
+        return super().model_dump(*args, **kwargs)
 
 
 class Transaction(BaseModel):
