@@ -8,7 +8,7 @@ from .. import errors as err
 
 class PaymentItem(BaseModel):
     name: str = Field(min_length=3, max_length=64)
-    count: int = Field(ge=0, le=9999)
+    count: int = Field(ge=1, le=9999)
     price: int = Field(ge=1, le=1728)
     comment: str = Field(min_length=3, max_length=64, default=None)
 
