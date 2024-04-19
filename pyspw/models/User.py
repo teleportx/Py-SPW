@@ -6,7 +6,7 @@ from warnings import warn
 import requests as rq
 from mojang import API as MAPI
 from mojang._types import UserProfile
-from pydantic import BaseModel, computed_field
+from pydantic import BaseModel, computed_field, Field
 
 from . import Card
 from .. import errors as err
@@ -22,23 +22,22 @@ class SkinVariant(Enum):
     CLASSIC = 'classic'
 
 
-class _SkinPart:
+class SkinPart:
     def __init__(self, url: str):
         self.__skin_part_url = url
 
-    def __str__(self):
-        return self.get_url()
+    @property
+    def url(self) -> str:
+        """
+        Адрес изображения части скина.
+        """
 
-    def __bytes__(self):
-        return self.get_image()
+        return self.__skin_part_url
 
     def get_url(self) -> str:
-        """
-        Получения ссылки на изображение части скина.
+        warn('Use .url', DeprecationWarning)
 
-        :return: Ссылка на изображение части скина.
-        """
-        return self.__skin_part_url
+        return self.url
 
     def get_image(self) -> bytes:
         """
@@ -69,31 +68,31 @@ class Skin:
         return self._variant
 
     @property
-    def cape(self) -> Optional[_SkinPart]:
+    def cape(self) -> Optional[SkinPart]:
         if self._profile.cape_url is None:
             return None
-        return _SkinPart(self._profile.cape_url)
+        return SkinPart(self._profile.cape_url)
 
-    def get_face(self, image_size: int = 64) -> _SkinPart:
-        return _SkinPart(f'https://visage.surgeplay.com/face/{image_size}/{self._profile.id}')
+    def get_face(self, image_size: int = 64) -> SkinPart:
+        return SkinPart(f'https://visage.surgeplay.com/face/{image_size}/{self._profile.id}')
 
-    def get_front(self, image_size: int = 64) -> _SkinPart:
-        return _SkinPart(f'https://visage.surgeplay.com/front/{image_size}/{self._profile.id}')
+    def get_front(self, image_size: int = 64) -> SkinPart:
+        return SkinPart(f'https://visage.surgeplay.com/front/{image_size}/{self._profile.id}')
 
-    def get_front_full(self, image_size: int = 64) -> _SkinPart:
-        return _SkinPart(f'https://visage.surgeplay.com/frontfull/{image_size}/{self._profile.id}')
+    def get_front_full(self, image_size: int = 64) -> SkinPart:
+        return SkinPart(f'https://visage.surgeplay.com/frontfull/{image_size}/{self._profile.id}')
 
-    def get_head(self, image_size: int = 64) -> _SkinPart:
-        return _SkinPart(f'https://visage.surgeplay.com/head/{image_size}/{self._profile.id}')
+    def get_head(self, image_size: int = 64) -> SkinPart:
+        return SkinPart(f'https://visage.surgeplay.com/head/{image_size}/{self._profile.id}')
 
-    def get_bust(self, image_size: int = 64) -> _SkinPart:
-        return _SkinPart(f'https://visage.surgeplay.com/bust/{image_size}/{self._profile.id}')
+    def get_bust(self, image_size: int = 64) -> SkinPart:
+        return SkinPart(f'https://visage.surgeplay.com/bust/{image_size}/{self._profile.id}')
 
-    def get_full(self, image_size: int = 64) -> _SkinPart:
-        return _SkinPart(f'https://visage.surgeplay.com/full/{image_size}/{self._profile.id}')
+    def get_full(self, image_size: int = 64) -> SkinPart:
+        return SkinPart(f'https://visage.surgeplay.com/full/{image_size}/{self._profile.id}')
 
-    def get_skin(self, image_size: int = 64) -> _SkinPart:
-        return _SkinPart(f'https://visage.surgeplay.com/skin/{image_size}/{self._profile.id}')
+    def get_skin(self, image_size: int = 64) -> SkinPart:
+        return SkinPart(f'https://visage.surgeplay.com/skin/{image_size}/{self._profile.id}')
 
 
 class City(BaseModel):
@@ -128,13 +127,7 @@ class User(BaseModel):
 class SelfUser(BaseModel):
     id: str
     username: str
-
-    @computed_field
-    @property
-    def uuid(self) -> Optional[str]:
-        if not hasattr(self, '__uuid'):
-            self.__uuid = mapi.get_uuid(self.username)
-        return self.__uuid
+    uuid: Optional[str] = Field(validation_alias='minecraftUUID')
 
     status: str
     city: Optional[City]
