@@ -70,7 +70,7 @@ class BaseMethod(ABC, Generic[ReturnType]):
                 len(self.__returns__.__args__) > 0 and \
                 self.__returns__ == List[self.__returns__.__args__[0]]:
             res = []
-            for el in self._request(authorization):
+            for el in self._request(authorization).json():
                 res.append(self.__returns__.__args__[0].model_validate(el))
 
             return res
