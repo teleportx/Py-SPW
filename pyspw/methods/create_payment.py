@@ -1,5 +1,6 @@
 from ..methods.base import BaseMethod, RequestTypes
-from ..models import CreatePaymentAnswer, Payment
+from ..models.ServerAnswers import CreatePaymentAnswer
+from ..models import Payment
 
 
 class CreatePayment(BaseMethod[CreatePaymentAnswer]):

@@ -4,7 +4,7 @@ import validators
 
 from .. import errors
 from ..methods.base import BaseMethod, RequestTypes
-from ..models import SetTransactionWebhookAnswer
+from ..models.ServerAnswers import SetTransactionWebhookAnswer
 
 
 class SetTransactionWebhook(BaseMethod[SetTransactionWebhookAnswer]):

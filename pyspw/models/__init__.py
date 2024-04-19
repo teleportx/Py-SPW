@@ -17,8 +17,4 @@ __all__ = [
     'Skin',
     'SkinVariant',
     'City',
-
-    'CreatePaymentAnswer',
-    'CreateTransactionAnswer',
-    'SetTransactionWebhookAnswer',
 ]

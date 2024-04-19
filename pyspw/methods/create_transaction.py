@@ -1,5 +1,6 @@
 from ..methods.base import BaseMethod, RequestTypes
-from ..models import CreateTransactionAnswer, Transaction
+from ..models.ServerAnswers import CreateTransactionAnswer
+from ..models import Transaction
 
 
 class CreateTransaction(BaseMethod[CreateTransactionAnswer]):
